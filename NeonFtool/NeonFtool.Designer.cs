@@ -1,4 +1,4 @@
-﻿
+
 using System.Drawing;
 
 namespace NeonFtool
@@ -31,6 +31,8 @@ namespace NeonFtool
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileMenuStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,6 +53,16 @@ namespace NeonFtool
             this.label5 = new System.Windows.Forms.Label();
             this.startButton1 = new System.Windows.Forms.Button();
             this.renameLabel1 = new System.Windows.Forms.LinkLabel();
+            this.parallelCheckbox1 = new System.Windows.Forms.CheckBox();
+            this.parallelCheckbox2 = new System.Windows.Forms.CheckBox();
+            this.parallelCheckbox3 = new System.Windows.Forms.CheckBox();
+            this.parallelCheckbox4 = new System.Windows.Forms.CheckBox();
+            this.parallelCheckbox5 = new System.Windows.Forms.CheckBox();
+            this.parallelCheckbox6 = new System.Windows.Forms.CheckBox();
+            this.parallelCheckbox7 = new System.Windows.Forms.CheckBox();
+            this.parallelCheckbox8 = new System.Windows.Forms.CheckBox();
+            this.parallelCheckbox9 = new System.Windows.Forms.CheckBox();
+            this.parallelCheckbox10 = new System.Windows.Forms.CheckBox();
             this.spammerGroupBox1 = new System.Windows.Forms.GroupBox();
             this.intervalNumeric1 = new System.Windows.Forms.NumericUpDown();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -370,8 +382,19 @@ namespace NeonFtool
             this.renameLabel1.TabStop = true;
             this.renameLabel1.Text = "Rename";
             // 
+            // parallelCheckbox1
+            // 
+            this.parallelCheckbox1.AutoSize = true;
+            this.parallelCheckbox1.Location = new System.Drawing.Point(365, 80);
+            this.parallelCheckbox1.Name = "parallelCheckbox1";
+            this.parallelCheckbox1.Size = new System.Drawing.Size(15, 14);
+            this.parallelCheckbox1.TabIndex = 9;
+            this.parallelCheckbox1.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.parallelCheckbox1, "Allow parallel");
+            // 
             // spammerGroupBox1
             // 
+            this.spammerGroupBox1.Controls.Add(this.parallelCheckbox1);
             this.spammerGroupBox1.Controls.Add(this.intervalNumeric1);
             this.spammerGroupBox1.Controls.Add(this.renameLabel1);
             this.spammerGroupBox1.Controls.Add(this.startButton1);
@@ -433,8 +456,19 @@ namespace NeonFtool
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Spam Tab 1";
             // 
+            // parallelCheckbox5
+            // 
+            this.parallelCheckbox5.AutoSize = true;
+            this.parallelCheckbox5.Location = new System.Drawing.Point(365, 80);
+            this.parallelCheckbox5.Name = "parallelCheckbox5";
+            this.parallelCheckbox5.Size = new System.Drawing.Size(15, 14);
+            this.parallelCheckbox5.TabIndex = 9;
+            this.parallelCheckbox5.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.parallelCheckbox5, "Allow parallel");
+            // 
             // spammerGroupBox5
             // 
+            this.spammerGroupBox5.Controls.Add(this.parallelCheckbox5);
             this.spammerGroupBox5.Controls.Add(this.intervalNumeric5);
             this.spammerGroupBox5.Controls.Add(this.renameLabel5);
             this.spammerGroupBox5.Controls.Add(this.startButton5);
@@ -571,8 +605,19 @@ namespace NeonFtool
             this.label25.TabIndex = 0;
             this.label25.Text = "Window";
             // 
+            // parallelCheckbox4
+            // 
+            this.parallelCheckbox4.AutoSize = true;
+            this.parallelCheckbox4.Location = new System.Drawing.Point(365, 80);
+            this.parallelCheckbox4.Name = "parallelCheckbox4";
+            this.parallelCheckbox4.Size = new System.Drawing.Size(15, 14);
+            this.parallelCheckbox4.TabIndex = 9;
+            this.parallelCheckbox4.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.parallelCheckbox4, "Allow parallel");
+            // 
             // spammerGroupBox4
             // 
+            this.spammerGroupBox4.Controls.Add(this.parallelCheckbox4);
             this.spammerGroupBox4.Controls.Add(this.intervalNumeric4);
             this.spammerGroupBox4.Controls.Add(this.renameLabel4);
             this.spammerGroupBox4.Controls.Add(this.startButton4);
@@ -709,8 +754,19 @@ namespace NeonFtool
             this.label20.TabIndex = 0;
             this.label20.Text = "Window";
             // 
+            // parallelCheckbox3
+            // 
+            this.parallelCheckbox3.AutoSize = true;
+            this.parallelCheckbox3.Location = new System.Drawing.Point(365, 80);
+            this.parallelCheckbox3.Name = "parallelCheckbox3";
+            this.parallelCheckbox3.Size = new System.Drawing.Size(15, 14);
+            this.parallelCheckbox3.TabIndex = 9;
+            this.parallelCheckbox3.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.parallelCheckbox3, "Allow parallel");
+            // 
             // spammerGroupBox3
             // 
+            this.spammerGroupBox3.Controls.Add(this.parallelCheckbox3);
             this.spammerGroupBox3.Controls.Add(this.intervalNumeric3);
             this.spammerGroupBox3.Controls.Add(this.renameLabel3);
             this.spammerGroupBox3.Controls.Add(this.startButton3);
@@ -847,8 +903,19 @@ namespace NeonFtool
             this.label15.TabIndex = 0;
             this.label15.Text = "Window";
             // 
+            // parallelCheckbox2
+            // 
+            this.parallelCheckbox2.AutoSize = true;
+            this.parallelCheckbox2.Location = new System.Drawing.Point(365, 80);
+            this.parallelCheckbox2.Name = "parallelCheckbox2";
+            this.parallelCheckbox2.Size = new System.Drawing.Size(15, 14);
+            this.parallelCheckbox2.TabIndex = 9;
+            this.parallelCheckbox2.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.parallelCheckbox2, "Allow parallel");
+            // 
             // spammerGroupBox2
             // 
+            this.spammerGroupBox2.Controls.Add(this.parallelCheckbox2);
             this.spammerGroupBox2.Controls.Add(this.intervalNumeric2);
             this.spammerGroupBox2.Controls.Add(this.renameLabel2);
             this.spammerGroupBox2.Controls.Add(this.startButton2);
@@ -999,8 +1066,19 @@ namespace NeonFtool
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Spam Tab 2";
             // 
+            // parallelCheckbox10
+            // 
+            this.parallelCheckbox10.AutoSize = true;
+            this.parallelCheckbox10.Location = new System.Drawing.Point(365, 80);
+            this.parallelCheckbox10.Name = "parallelCheckbox10";
+            this.parallelCheckbox10.Size = new System.Drawing.Size(15, 14);
+            this.parallelCheckbox10.TabIndex = 9;
+            this.parallelCheckbox10.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.parallelCheckbox10, "Allow parallel");
+            // 
             // spammerGroupBox10
             // 
+            this.spammerGroupBox10.Controls.Add(this.parallelCheckbox10);
             this.spammerGroupBox10.Controls.Add(this.intervalNumeric10);
             this.spammerGroupBox10.Controls.Add(this.renameLabel10);
             this.spammerGroupBox10.Controls.Add(this.startButton10);
@@ -1137,8 +1215,19 @@ namespace NeonFtool
             this.label50.TabIndex = 0;
             this.label50.Text = "Window";
             // 
+            // parallelCheckbox9
+            // 
+            this.parallelCheckbox9.AutoSize = true;
+            this.parallelCheckbox9.Location = new System.Drawing.Point(365, 80);
+            this.parallelCheckbox9.Name = "parallelCheckbox9";
+            this.parallelCheckbox9.Size = new System.Drawing.Size(15, 14);
+            this.parallelCheckbox9.TabIndex = 9;
+            this.parallelCheckbox9.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.parallelCheckbox9, "Allow parallel");
+            // 
             // spammerGroupBox9
             // 
+            this.spammerGroupBox9.Controls.Add(this.parallelCheckbox9);
             this.spammerGroupBox9.Controls.Add(this.intervalNumeric9);
             this.spammerGroupBox9.Controls.Add(this.renameLabel9);
             this.spammerGroupBox9.Controls.Add(this.startButton9);
@@ -1275,8 +1364,19 @@ namespace NeonFtool
             this.label30.TabIndex = 0;
             this.label30.Text = "Window";
             // 
+            // parallelCheckbox6
+            // 
+            this.parallelCheckbox6.AutoSize = true;
+            this.parallelCheckbox6.Location = new System.Drawing.Point(365, 80);
+            this.parallelCheckbox6.Name = "parallelCheckbox6";
+            this.parallelCheckbox6.Size = new System.Drawing.Size(15, 14);
+            this.parallelCheckbox6.TabIndex = 9;
+            this.parallelCheckbox6.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.parallelCheckbox6, "Allow parallel");
+            // 
             // spammerGroupBox6
             // 
+            this.spammerGroupBox6.Controls.Add(this.parallelCheckbox6);
             this.spammerGroupBox6.Controls.Add(this.intervalNumeric6);
             this.spammerGroupBox6.Controls.Add(this.renameLabel6);
             this.spammerGroupBox6.Controls.Add(this.startButton6);
@@ -1413,8 +1513,19 @@ namespace NeonFtool
             this.label45.TabIndex = 0;
             this.label45.Text = "Window";
             // 
+            // parallelCheckbox8
+            // 
+            this.parallelCheckbox8.AutoSize = true;
+            this.parallelCheckbox8.Location = new System.Drawing.Point(365, 80);
+            this.parallelCheckbox8.Name = "parallelCheckbox8";
+            this.parallelCheckbox8.Size = new System.Drawing.Size(15, 14);
+            this.parallelCheckbox8.TabIndex = 9;
+            this.parallelCheckbox8.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.parallelCheckbox8, "Allow parallel");
+            // 
             // spammerGroupBox8
             // 
+            this.spammerGroupBox8.Controls.Add(this.parallelCheckbox8);
             this.spammerGroupBox8.Controls.Add(this.intervalNumeric8);
             this.spammerGroupBox8.Controls.Add(this.renameLabel8);
             this.spammerGroupBox8.Controls.Add(this.startButton8);
@@ -1551,8 +1662,19 @@ namespace NeonFtool
             this.label35.TabIndex = 0;
             this.label35.Text = "Window";
             // 
+            // parallelCheckbox7
+            // 
+            this.parallelCheckbox7.AutoSize = true;
+            this.parallelCheckbox7.Location = new System.Drawing.Point(365, 80);
+            this.parallelCheckbox7.Name = "parallelCheckbox7";
+            this.parallelCheckbox7.Size = new System.Drawing.Size(15, 14);
+            this.parallelCheckbox7.TabIndex = 9;
+            this.parallelCheckbox7.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.parallelCheckbox7, "Allow parallel");
+            // 
             // spammerGroupBox7
             // 
+            this.spammerGroupBox7.Controls.Add(this.parallelCheckbox7);
             this.spammerGroupBox7.Controls.Add(this.intervalNumeric7);
             this.spammerGroupBox7.Controls.Add(this.renameLabel7);
             this.spammerGroupBox7.Controls.Add(this.startButton7);
@@ -1894,6 +2016,17 @@ namespace NeonFtool
         private System.Windows.Forms.NumericUpDown intervalNumeric10;
         private System.Windows.Forms.LinkLabel renameLabel10;
         private System.Windows.Forms.Button startButton10;
+        private System.Windows.Forms.CheckBox parallelCheckbox1;
+        private System.Windows.Forms.CheckBox parallelCheckbox2;
+        private System.Windows.Forms.CheckBox parallelCheckbox3;
+        private System.Windows.Forms.CheckBox parallelCheckbox4;
+        private System.Windows.Forms.CheckBox parallelCheckbox5;
+        private System.Windows.Forms.CheckBox parallelCheckbox6;
+        private System.Windows.Forms.CheckBox parallelCheckbox7;
+        private System.Windows.Forms.CheckBox parallelCheckbox8;
+        private System.Windows.Forms.CheckBox parallelCheckbox9;
+        private System.Windows.Forms.CheckBox parallelCheckbox10;
+        private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem dumpCleanerToolStripMenuItem;

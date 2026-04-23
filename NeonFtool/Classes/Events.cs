@@ -11,12 +11,14 @@ namespace NeonFtool.Classes
     {
         private readonly ProcessManager _processManager;
         private readonly Hotkey _hotkey;
+        private readonly Controller _controller;
         private readonly Dictionary<int, Spam> _spamList = new();
 
-        public Events(ProcessManager processManager, Hotkey hotkey)
+        public Events(ProcessManager processManager, Hotkey hotkey, Controller controller)
         {
             _processManager = processManager;
             _hotkey = hotkey;
+            _controller = controller;
         }
 
         public void OnStartStopClick(object sender, EventArgs e)
@@ -33,6 +35,24 @@ namespace NeonFtool.Classes
 
             if (button.Text == "Start")
             {
+                // Stop other spammers that don't allow parallel execution
+                foreach (GroupBox otherGb in _controller.GetAllGroupBox())
+                {
+                    int otherIndex = Controller.GetIndex(otherGb);
+                    if (otherIndex == index) continue; // Skip ourselves
+
+                    if (_spamList.TryGetValue(otherIndex, out Spam otherSpam))
+                    {
+                        CheckBox parallelCb = (CheckBox)Controller.GetControlOnGroupBox(otherGb, "parallelCheckbox");
+                        if (!parallelCb.Checked)
+                        {
+                            // Trigger stop for the other spammer by clicking its button
+                            Button otherStartButton = (Button)Controller.GetControlOnGroupBox(otherGb, "startButton");
+                            OnStartStopClick(otherStartButton, EventArgs.Empty);
+                        }
+                    }
+                }
+
                 if (windowComboBox.Text == Constants.SELECT_WINDOW)
                 {
                     MessageBox.Show("Please select a window.", Constants.MAIN_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Warning);

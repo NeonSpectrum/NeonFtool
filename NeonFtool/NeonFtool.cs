@@ -35,7 +35,7 @@ namespace NeonFtool
             InitializeComponent();
 
             _controller = new Controller(Controls);
-            _events     = new Events(_processManager, _hotkey);
+            _events     = new Events(_processManager, _hotkey, _controller);
 
             _windowManagerForm.WindowClosed += ReloadSettings;
             _dumpCleanerForm.WindowClosed   += ReloadSettings;
@@ -191,6 +191,9 @@ namespace NeonFtool
 
                 ((NumericUpDown)Controller.GetControlOnGroupBox(groupBox, "intervalNumeric")).Value
                     = (decimal)(double)Settings.GetOrDefault(slot, "intervalNumeric", 50.0);
+
+                ((CheckBox)Controller.GetControlOnGroupBox(groupBox, "parallelCheckbox")).Checked
+                    = (bool)Settings.GetOrDefault(slot, "parallelCheckbox", false);
             }
         }
 
@@ -207,6 +210,7 @@ namespace NeonFtool
                 slot["fKeyComboBox"]    = ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "fKeyComboBox")).SelectedIndex;
                 slot["skillComboBox"]   = ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "skillComboBox")).SelectedIndex;
                 slot["intervalNumeric"] = (double)((NumericUpDown)Controller.GetControlOnGroupBox(groupBox, "intervalNumeric")).Value;
+                slot["parallelCheckbox"] = ((CheckBox)Controller.GetControlOnGroupBox(groupBox, "parallelCheckbox")).Checked;
 
                 _settings.Spammer[index] = slot;
             }
