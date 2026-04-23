@@ -394,9 +394,24 @@ namespace NeonFtool
             // intervalNumeric1
             // 
             this.intervalNumeric1.Location = new System.Drawing.Point(179, 76);
+            this.intervalNumeric1.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.intervalNumeric1.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.intervalNumeric1.Name = "intervalNumeric1";
             this.intervalNumeric1.Size = new System.Drawing.Size(103, 20);
             this.intervalNumeric1.TabIndex = 5;
+            this.intervalNumeric1.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             // 
             // tabControl1
             // 
@@ -447,9 +462,24 @@ namespace NeonFtool
             // intervalNumeric5
             // 
             this.intervalNumeric5.Location = new System.Drawing.Point(179, 76);
+            this.intervalNumeric5.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.intervalNumeric5.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.intervalNumeric5.Name = "intervalNumeric5";
             this.intervalNumeric5.Size = new System.Drawing.Size(103, 20);
             this.intervalNumeric5.TabIndex = 37;
+            this.intervalNumeric5.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             // 
             // renameLabel5
             // 
@@ -575,9 +605,24 @@ namespace NeonFtool
             // intervalNumeric4
             // 
             this.intervalNumeric4.Location = new System.Drawing.Point(179, 76);
+            this.intervalNumeric4.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.intervalNumeric4.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.intervalNumeric4.Name = "intervalNumeric4";
             this.intervalNumeric4.Size = new System.Drawing.Size(103, 20);
             this.intervalNumeric4.TabIndex = 29;
+            this.intervalNumeric4.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             // 
             // renameLabel4
             // 
@@ -703,9 +748,24 @@ namespace NeonFtool
             // intervalNumeric3
             // 
             this.intervalNumeric3.Location = new System.Drawing.Point(179, 76);
+            this.intervalNumeric3.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.intervalNumeric3.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.intervalNumeric3.Name = "intervalNumeric3";
             this.intervalNumeric3.Size = new System.Drawing.Size(103, 20);
             this.intervalNumeric3.TabIndex = 21;
+            this.intervalNumeric3.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             // 
             // renameLabel3
             // 
@@ -831,9 +891,24 @@ namespace NeonFtool
             // intervalNumeric2
             // 
             this.intervalNumeric2.Location = new System.Drawing.Point(179, 76);
+            this.intervalNumeric2.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.intervalNumeric2.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.intervalNumeric2.Name = "intervalNumeric2";
             this.intervalNumeric2.Size = new System.Drawing.Size(103, 20);
             this.intervalNumeric2.TabIndex = 13;
+            this.intervalNumeric2.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             // 
             // renameLabel2
             // 
@@ -973,9 +1048,24 @@ namespace NeonFtool
             // intervalNumeric10
             // 
             this.intervalNumeric10.Location = new System.Drawing.Point(179, 76);
+            this.intervalNumeric10.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.intervalNumeric10.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.intervalNumeric10.Name = "intervalNumeric10";
             this.intervalNumeric10.Size = new System.Drawing.Size(103, 20);
             this.intervalNumeric10.TabIndex = 11;
+            this.intervalNumeric10.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             // 
             // renameLabel10
             // 
@@ -1101,9 +1191,24 @@ namespace NeonFtool
             // intervalNumeric9
             // 
             this.intervalNumeric9.Location = new System.Drawing.Point(179, 76);
+            this.intervalNumeric9.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.intervalNumeric9.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.intervalNumeric9.Name = "intervalNumeric9";
             this.intervalNumeric9.Size = new System.Drawing.Size(103, 20);
             this.intervalNumeric9.TabIndex = 11;
+            this.intervalNumeric9.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             // 
             // renameLabel9
             // 
@@ -1229,9 +1334,24 @@ namespace NeonFtool
             // intervalNumeric6
             // 
             this.intervalNumeric6.Location = new System.Drawing.Point(179, 76);
+            this.intervalNumeric6.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.intervalNumeric6.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.intervalNumeric6.Name = "intervalNumeric6";
             this.intervalNumeric6.Size = new System.Drawing.Size(103, 20);
             this.intervalNumeric6.TabIndex = 11;
+            this.intervalNumeric6.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             // 
             // renameLabel6
             // 
@@ -1357,9 +1477,24 @@ namespace NeonFtool
             // intervalNumeric8
             // 
             this.intervalNumeric8.Location = new System.Drawing.Point(179, 76);
+            this.intervalNumeric8.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.intervalNumeric8.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.intervalNumeric8.Name = "intervalNumeric8";
             this.intervalNumeric8.Size = new System.Drawing.Size(103, 20);
             this.intervalNumeric8.TabIndex = 11;
+            this.intervalNumeric8.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             // 
             // renameLabel8
             // 
@@ -1485,9 +1620,24 @@ namespace NeonFtool
             // intervalNumeric7
             // 
             this.intervalNumeric7.Location = new System.Drawing.Point(179, 76);
+            this.intervalNumeric7.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.intervalNumeric7.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.intervalNumeric7.Name = "intervalNumeric7";
             this.intervalNumeric7.Size = new System.Drawing.Size(103, 20);
             this.intervalNumeric7.TabIndex = 11;
+            this.intervalNumeric7.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             // 
             // renameLabel7
             // 
