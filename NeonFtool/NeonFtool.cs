@@ -190,7 +190,7 @@ namespace NeonFtool
                     = (int)(long)Settings.GetOrDefault(slot, "skillComboBox", 0L);
 
                 ((NumericUpDown)Controller.GetControlOnGroupBox(groupBox, "intervalNumeric")).Value
-                    = (decimal)(double)Settings.GetOrDefault(slot, "intervalNumeric", 0.0);
+                    = (decimal)(double)Settings.GetOrDefault(slot, "intervalNumeric", 50.0);
             }
         }
 

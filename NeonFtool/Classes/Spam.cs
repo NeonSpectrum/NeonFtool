@@ -19,7 +19,7 @@ namespace NeonFtool.Classes
         public Spam(Process process, int interval, int fKey, int skill)
         {
             _process  = process;
-            _interval = Math.Max(interval, 100); // enforce minimum 100 ms
+            _interval = Math.Max(interval, 10); // enforce minimum 10 ms
             _fKey     = fKey;
             _skill    = skill;
         }
