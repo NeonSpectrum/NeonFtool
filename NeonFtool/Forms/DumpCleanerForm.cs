@@ -105,11 +105,11 @@ namespace NeonFtool.Forms
 
         private void LoadSettings()
         {
-            executeStartupCheckBox.Checked = (bool)Settings.GetOrDefault(_settings.DumpCleaner, "autoCleanDumpOnStartup", false);
-            rptCheckBox.Checked            = (bool)Settings.GetOrDefault(_settings.DumpCleaner, "rpt",  true);
-            dmpCheckBox.Checked            = (bool)Settings.GetOrDefault(_settings.DumpCleaner, "dmp",  true);
-            txtCheckBox.Checked            = (bool)Settings.GetOrDefault(_settings.DumpCleaner, "txt",  true);
-            insanityFlyffPathTextBox.Text   = Settings.GetOrDefault(_settings.DumpCleaner, "path", Constants.BROWSE_LABEL).ToString();
+            executeStartupCheckBox.Checked = Settings.GetOrDefault(_settings.DumpCleaner, "autoCleanDumpOnStartup", false) is true;
+            rptCheckBox.Checked            = Settings.GetOrDefault(_settings.DumpCleaner, "rpt",  true) is true;
+            dmpCheckBox.Checked            = Settings.GetOrDefault(_settings.DumpCleaner, "dmp",  true) is true;
+            txtCheckBox.Checked            = Settings.GetOrDefault(_settings.DumpCleaner, "txt",  true) is true;
+            insanityFlyffPathTextBox.Text  = Settings.GetOrDefault(_settings.DumpCleaner, "path", Constants.BROWSE_LABEL)?.ToString() ?? Constants.BROWSE_LABEL;
         }
 
         private void SaveSettings()

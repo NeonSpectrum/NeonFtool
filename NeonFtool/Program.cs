@@ -11,8 +11,15 @@ namespace NeonFtool
         [STAThread]
         private static void Main()
         {
-            ApplicationConfiguration.Initialize();
-            Application.Run(new NeonFtool());
+            try
+            {
+                ApplicationConfiguration.Initialize();
+                Application.Run(new NeonFtool());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Startup Error: {ex.Message}\n\nStack Trace:\n{ex.StackTrace}", "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
