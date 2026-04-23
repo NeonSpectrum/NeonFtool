@@ -1,6 +1,6 @@
-﻿using Ftool.Libraries;
 using NeonFtool.Classes;
 using NeonFtool.Forms;
+using NeonFtool.Libraries;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,326 +11,300 @@ namespace NeonFtool
 {
     public partial class NeonFtool : Form
     {
-        private ProcessManager processManager;
-        private Controller controller;
-        private Events events;
-        private Hotkey hotkey;
-        private Settings settings;
-        private DumpCleanerForm dumpCleanerForm;
-        private WindowManagerForm windowManagerForm;
-        private AboutForm aboutForm;
+        private readonly ProcessManager _processManager;
+        private readonly Controller _controller;
+        private readonly Events _events;
+        private readonly Hotkey _hotkey;
+        private Settings _settings;
+        private readonly DumpCleanerForm _dumpCleanerForm;
+        private readonly WindowManagerForm _windowManagerForm;
+        private AboutForm _aboutForm;
 
-        private bool isLoaded = false;
+        private bool _isLoaded;
 
         public NeonFtool()
         {
-            processManager = new ProcessManager();
-            controller = new Controller(Controls);
-            hotkey = new Hotkey();
-            events = new Events(processManager, hotkey);
-            settings = Settings.Get();
+            _processManager   = new ProcessManager();
+            _hotkey           = new Hotkey();
+            _settings         = Settings.Get();
+            _dumpCleanerForm  = new DumpCleanerForm();
+            _windowManagerForm = new WindowManagerForm();
+            _aboutForm        = new AboutForm();
 
-            dumpCleanerForm = new DumpCleanerForm();
-            windowManagerForm = new WindowManagerForm();
-            aboutForm = new AboutForm();
-
-            windowManagerForm.WindowClosed += ReloadSettings;
-
+            // Controller needs the Controls collection, so must come after InitializeComponent.
             InitializeComponent();
+
+            _controller = new Controller(Controls);
+            _events     = new Events(_processManager, _hotkey);
+
+            _windowManagerForm.WindowClosed += ReloadSettings;
+            _dumpCleanerForm.WindowClosed   += ReloadSettings;
+
             ExecuteStartup();
         }
 
         private void Ftool_Load(object sender, EventArgs e)
         {
-            this.Text = Constants.MAIN_TITLE;
+            Text = Constants.MAIN_TITLE;
         }
 
         private void ExecuteStartup()
         {
             RefreshWindowList();
             LoadComboBoxValues();
-            SetEventHandler();
+            SetEventHandlers();
             LoadSettings();
             ExecuteDumpCleaner();
 
-            isLoaded = true;
+            _isLoaded = true;
         }
+
+        // ──────────────────────────────────────────────────────────
+        //  Window list
+        // ──────────────────────────────────────────────────────────
 
         private void RefreshWindowList()
         {
-            Process[] processes = processManager.RefreshProcessList().GetProcessList();
-            ComboBox[] comboBoxes = controller.GetAllWindowComboBox();
+            Process[] processes = _processManager.RefreshProcessList().GetProcessList();
 
-            foreach (ComboBox comboBox in comboBoxes)
+            foreach (ComboBox comboBox in _controller.GetAllWindowComboBox())
             {
-                int lastIndex = 0;
-                string lastValue = "";
-
-                if (comboBox.SelectedItem != null)
-                {
-                    lastValue = (comboBox.SelectedItem as ComboBoxItem).Text;
-                }
+                // Remember previously selected title so we can restore it.
+                string lastTitle = (comboBox.SelectedItem as ComboBoxItem)?.Text ?? "";
 
                 comboBox.Items.Clear();
+                comboBox.Items.Add(new ComboBoxItem { Text = Constants.SELECT_WINDOW, Value = -1 });
 
-                ComboBoxItem comboBoxItem = new ComboBoxItem();
-                comboBoxItem.Text = Constants.SELECT_WINDOW;
-                comboBoxItem.Value = -1;
-
-                comboBox.Items.Add(comboBoxItem);
+                int restoreIndex = 0;
 
                 foreach (Process process in processes)
                 {
-                    comboBoxItem = new ComboBoxItem();
-                    comboBoxItem.Text = process.MainWindowTitle;
-                    comboBoxItem.Value = process.Id;
+                    comboBox.Items.Add(new ComboBoxItem { Text = process.MainWindowTitle, Value = process.Id });
 
-                    comboBox.Items.Add(comboBoxItem);
-
-                    if (lastValue == process.MainWindowTitle)
-                    {
-                        lastIndex = comboBox.Items.Count - 1;
-                    }
+                    if (process.MainWindowTitle == lastTitle)
+                        restoreIndex = comboBox.Items.Count - 1;
                 }
 
-                comboBox.SelectedIndex = lastIndex;
+                comboBox.SelectedIndex = restoreIndex;
             }
         }
 
-        private void SetEventHandler()
-        {
-            GroupBox[] groupBoxes = controller.GetAllGroupBox().ToArray();
-
-            foreach (GroupBox groupBox in groupBoxes)
-            {
-                (Controller.GetControlOnGroupBox(groupBox, "startButton") as Button).Click += new EventHandler(events.OnStartStopClick);
-                (Controller.GetControlOnGroupBox(groupBox, "renameLabel") as LinkLabel).Click += new EventHandler(events.OnRenameClick);
-                (Controller.GetControlOnGroupBox(groupBox, "hotkeyComboBox") as ComboBox).SelectedIndexChanged += new EventHandler(events.OnHotkeyChanged);
-            }
-        }
+        // ──────────────────────────────────────────────────────────
+        //  ComboBox population
+        // ──────────────────────────────────────────────────────────
 
         private void LoadComboBoxValues()
         {
-            GroupBox[] groupBoxes = controller.GetAllGroupBox().ToArray();
-
-            foreach (GroupBox groupBox in groupBoxes)
+            foreach (GroupBox groupBox in _controller.GetAllGroupBox())
             {
-                // Hotkeys
-                ComboBox comboBox = Controller.GetControlOnGroupBox(groupBox, "hotkeyComboBox") as ComboBox;
-
-                foreach (KeyValuePair<Keys, string> entry in Constants.Get().hotkeys)
-                {
-                    ComboBoxItem comboBoxItem = new ComboBoxItem();
-                    comboBoxItem.Text = entry.Value;
-                    comboBoxItem.Value = entry.Key;
-
-                    comboBox.Items.Add(comboBoxItem);
-                }
-
-                comboBox.SelectedIndex = 0;
-
-                // F-Key
-                comboBox = Controller.GetControlOnGroupBox(groupBox, "fKeyComboBox") as ComboBox;
-
-                foreach (KeyValuePair<int, string> entry in Constants.Get().fKeys)
-                {
-                    ComboBoxItem comboBoxItem = new ComboBoxItem();
-                    comboBoxItem.Text = entry.Value;
-                    comboBoxItem.Value = entry.Key;
-
-                    comboBox.Items.Add(comboBoxItem);
-                }
-
-                comboBox.SelectedIndex = 0;
-
-                // SkillBar
-                comboBox = Controller.GetControlOnGroupBox(groupBox, "skillComboBox") as ComboBox;
-
-                foreach (KeyValuePair<int, string> entry in Constants.Get().skillKeys)
-                {
-                    ComboBoxItem comboBoxItem = new ComboBoxItem();
-                    comboBoxItem.Text = entry.Value;
-                    comboBoxItem.Value = entry.Key;
-
-                    comboBox.Items.Add(comboBoxItem);
-                }
-
-                comboBox.SelectedIndex = 0;
+                PopulateHotkeyComboBox(groupBox);
+                PopulateKeyComboBox(groupBox, "fKeyComboBox",  Constants.FKeys);
+                PopulateKeyComboBox(groupBox, "skillComboBox", Constants.SkillKeys);
             }
         }
 
-        private void ExecuteDumpCleaner()
+        private static void PopulateHotkeyComboBox(GroupBox groupBox)
         {
-            var insanitySettings = settings.DumpCleaner;
+            ComboBox comboBox = (ComboBox)Controller.GetControlOnGroupBox(groupBox, "hotkeyComboBox");
 
-            if (insanitySettings.Count != 0 && (bool)Settings.GetOrDefault<string, object>(insanitySettings, "autoCleanDumpOnStartup"))
+            foreach ((_, Keys key, string label) in Constants.Hotkeys)
             {
-                try
-                {
-                    dumpCleanerForm.CleanDumpInsanityFlyff(
-                        settings.DumpCleaner["path"].ToString(),
-                        (bool)settings.DumpCleaner["rpt"],
-                        (bool)settings.DumpCleaner["dmp"],
-                        (bool)settings.DumpCleaner["txt"]
-                    );
-                }
-                catch
-                { }
+                comboBox.Items.Add(new ComboBoxItem { Text = label, Value = key });
+            }
+
+            comboBox.SelectedIndex = 0;
+        }
+
+        private static void PopulateKeyComboBox(GroupBox groupBox, string controlName,
+                                                 IReadOnlyDictionary<int, string> source)
+        {
+            ComboBox comboBox = (ComboBox)Controller.GetControlOnGroupBox(groupBox, controlName);
+
+            foreach (KeyValuePair<int, string> entry in source)
+            {
+                comboBox.Items.Add(new ComboBoxItem { Text = entry.Value, Value = entry.Key });
+            }
+
+            comboBox.SelectedIndex = 0;
+        }
+
+        // ──────────────────────────────────────────────────────────
+        //  Event wiring
+        // ──────────────────────────────────────────────────────────
+
+        private void SetEventHandlers()
+        {
+            foreach (GroupBox groupBox in _controller.GetAllGroupBox())
+            {
+                ((Button)Controller.GetControlOnGroupBox(groupBox, "startButton")).Click
+                    += _events.OnStartStopClick;
+
+                ((LinkLabel)Controller.GetControlOnGroupBox(groupBox, "renameLabel")).Click
+                    += _events.OnRenameClick;
+
+                ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "hotkeyComboBox")).SelectedIndexChanged
+                    += _events.OnHotkeyChanged;
             }
         }
+
+        // ──────────────────────────────────────────────────────────
+        //  Settings persistence
+        // ──────────────────────────────────────────────────────────
 
         private void LoadSettings()
         {
-            if (settings.Spammer.Count == 0) return;
+            if (_settings.Spammer.Count == 0) return;
 
-            GroupBox[] groupBoxes = controller.GetAllGroupBox().ToArray();
-
-            foreach (GroupBox groupBox in groupBoxes)
+            foreach (GroupBox groupBox in _controller.GetAllGroupBox())
             {
                 int index = Controller.GetIndex(groupBox);
 
-                if (settings.Spammer.ContainsKey(index) == false)
+                if (!_settings.Spammer.ContainsKey(index))
+                    _settings.Spammer[index] = new Dictionary<string, object>();
+
+                Dictionary<string, object> slot = _settings.Spammer[index];
+
+                groupBox.Text = Settings.GetOrDefault(slot, "spammerGroupBox", groupBox.Text).ToString();
+
+                // Window ComboBox
+                ComboBox windowCb = (ComboBox)Controller.GetControlOnGroupBox(groupBox, "windowComboBox");
+                if (slot.TryGetValue("windowComboBox", out object savedWindow))
                 {
-                    settings.Spammer[index] = new Dictionary<string, object>();
-                }
-
-                groupBox.Text = Settings.GetOrDefault(settings.Spammer[index], "spammerGroupBox", groupBox.Text).ToString();
-
-                ComboBox comboBox = Controller.GetControlOnGroupBox(groupBox, "windowComboBox") as ComboBox;
-
-                if (settings.Spammer[index].ContainsKey("windowComboBox"))
-                {
-                    int counter = 0;
-                    foreach (ComboBoxItem item in comboBox.Items)
+                    for (int i = 0; i < windowCb.Items.Count; i++)
                     {
-                        if (item.Text == settings.Spammer[index]["windowComboBox"].ToString())
+                        if (((ComboBoxItem)windowCb.Items[i]).Text == savedWindow.ToString())
                         {
-                            comboBox.SelectedIndex = counter;
+                            windowCb.SelectedIndex = i;
                             break;
                         }
-
-                        counter++;
                     }
                 }
-                else
-                {
-                    comboBox.SelectedIndex = 0;
-                }
 
-                comboBox = Controller.GetControlOnGroupBox(groupBox, "hotkeyComboBox") as ComboBox;
-                comboBox.SelectedIndex = (int)(long)Settings.GetOrDefault(settings.Spammer[index], "hotkeyComboBox", 0);
+                ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "hotkeyComboBox")).SelectedIndex
+                    = (int)(long)Settings.GetOrDefault(slot, "hotkeyComboBox", 0L);
 
-                comboBox = Controller.GetControlOnGroupBox(groupBox, "fKeyComboBox") as ComboBox;
-                comboBox.SelectedIndex = (int)(long)Settings.GetOrDefault(settings.Spammer[index], "fKeyComboBox", 0);
+                ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "fKeyComboBox")).SelectedIndex
+                    = (int)(long)Settings.GetOrDefault(slot, "fKeyComboBox", 0L);
 
-                comboBox = Controller.GetControlOnGroupBox(groupBox, "skillComboBox") as ComboBox;
-                comboBox.SelectedIndex = (int)(long)Settings.GetOrDefault(settings.Spammer[index], "skillComboBox", 0);
+                ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "skillComboBox")).SelectedIndex
+                    = (int)(long)Settings.GetOrDefault(slot, "skillComboBox", 0L);
 
-                NumericUpDown intervalNumeric = Controller.GetControlOnGroupBox(groupBox, "intervalNumeric") as NumericUpDown;
-                intervalNumeric.Value = (int)(double)Settings.GetOrDefault(settings.Spammer[index], "intervalNumeric", 0);
+                ((NumericUpDown)Controller.GetControlOnGroupBox(groupBox, "intervalNumeric")).Value
+                    = (decimal)(double)Settings.GetOrDefault(slot, "intervalNumeric", 0.0);
             }
         }
 
         private void SaveSettings()
         {
-            GroupBox[] groupBoxes = controller.GetAllGroupBox().ToArray();
-
-            foreach (GroupBox groupBox in groupBoxes)
+            foreach (GroupBox groupBox in _controller.GetAllGroupBox())
             {
                 int index = Controller.GetIndex(groupBox);
+                Dictionary<string, object> slot = new();
 
-                settings.Spammer[index] = new Dictionary<string, object>();
+                slot["spammerGroupBox"] = groupBox.Text;
+                slot["windowComboBox"]  = ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "windowComboBox")).SelectedItem is ComboBoxItem wi ? wi.Text : "";
+                slot["hotkeyComboBox"]  = ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "hotkeyComboBox")).SelectedIndex;
+                slot["fKeyComboBox"]    = ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "fKeyComboBox")).SelectedIndex;
+                slot["skillComboBox"]   = ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "skillComboBox")).SelectedIndex;
+                slot["intervalNumeric"] = (double)((NumericUpDown)Controller.GetControlOnGroupBox(groupBox, "intervalNumeric")).Value;
 
-                settings.Spammer[index]["spammerGroupBox"] = groupBox.Text;
-
-                ComboBox comboBox = Controller.GetControlOnGroupBox(groupBox, "windowComboBox") as ComboBox;
-                settings.Spammer[index]["windowComboBox"] = (comboBox.SelectedItem as ComboBoxItem).Text;
-
-                comboBox = Controller.GetControlOnGroupBox(groupBox, "hotkeyComboBox") as ComboBox;
-                settings.Spammer[index]["hotkeyComboBox"] = comboBox.SelectedIndex;
-
-                comboBox = Controller.GetControlOnGroupBox(groupBox, "fKeyComboBox") as ComboBox;
-                settings.Spammer[index]["fKeyComboBox"] = comboBox.SelectedIndex;
-
-                comboBox = Controller.GetControlOnGroupBox(groupBox, "skillComboBox") as ComboBox;
-                settings.Spammer[index]["skillComboBox"] = comboBox.SelectedIndex;
-
-                NumericUpDown intervalNumeric = Controller.GetControlOnGroupBox(groupBox, "intervalNumeric") as NumericUpDown;
-                settings.Spammer[index]["intervalNumeric"] = intervalNumeric.Value;
+                _settings.Spammer[index] = slot;
             }
 
-            settings.Save();
+            _settings.Save();
         }
 
         private void ReloadSettings()
         {
-            this.settings = Settings.Get();
+            _settings = Settings.Get();
+        }
+
+        // ──────────────────────────────────────────────────────────
+        //  Dump cleaner
+        // ──────────────────────────────────────────────────────────
+
+        private void ExecuteDumpCleaner()
+        {
+            var dc = _settings.DumpCleaner;
+
+            if (dc.Count == 0) return;
+            if (Settings.GetOrDefault(dc, "autoCleanDumpOnStartup", false) is not true) return;
+
+            try
+            {
+                _dumpCleanerForm.CleanDumpInsanityFlyff(
+                    dc["path"].ToString(),
+                    (bool)dc["rpt"],
+                    (bool)dc["dmp"],
+                    (bool)dc["txt"]
+                );
+            }
+            catch { /* Silently ignore startup clean failures */ }
+        }
+
+        // ──────────────────────────────────────────────────────────
+        //  Form events
+        // ──────────────────────────────────────────────────────────
+
+        private void Ftool_Activated(object sender, EventArgs e)
+        {
+            if (_isLoaded) RefreshWindowList();
         }
 
         private void Ftool_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveSettings();
 
-            windowManagerForm.rightProcesses.ForEach(p =>
-            {
-                ProcessManager.ShowWindow(p.MainWindowHandle);
-            });
+            // Restore any hidden windows before exit.
+            _windowManagerForm.RightProcesses.ForEach(p => ProcessManager.ShowWindow(p.MainWindowHandle));
         }
 
         private void Ftool_FormClosed(object sender, FormClosedEventArgs e)
         {
-            this.hotkey.Dispose();
+            _hotkey.Dispose();
             Environment.Exit(Environment.ExitCode);
         }
 
-        private void Ftool_Activated(object sender, EventArgs e)
-        {
-            if (isLoaded == true) RefreshWindowList();
-        }
+        // ──────────────────────────────────────────────────────────
+        //  Menu strip handlers
+        // ──────────────────────────────────────────────────────────
 
-        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e) =>
             RefreshWindowList();
-        }
 
         private void windowManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (windowManagerForm.Visible)
-            {
-                windowManagerForm.Activate();
-            }
-
-            windowManagerForm.Show();
+            if (_windowManagerForm.Visible)
+                _windowManagerForm.Activate();
+            else
+                _windowManagerForm.Show();
         }
 
         private void dumpCleanerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (dumpCleanerForm.IsDisposed)
-            {
-                dumpCleanerForm = new DumpCleanerForm();
-            }
+            if (_dumpCleanerForm.IsDisposed) return; // already disposed — shouldn't happen with shared instance
 
-            dumpCleanerForm.WindowClosed += ReloadSettings;
-
-            dumpCleanerForm.ShowDialog();
+            _dumpCleanerForm.ShowDialog();
         }
 
         private void aboutMenuStrip_Click(object sender, EventArgs e)
         {
-            if (aboutForm.IsDisposed)
-            {
-                aboutForm = new AboutForm();
-            }
+            if (_aboutForm.IsDisposed)
+                _aboutForm = new AboutForm();
 
-            aboutForm.ShowDialog();
+            _aboutForm.ShowDialog();
         }
+
+        // ──────────────────────────────────────────────────────────
+        //  Composited window (eliminates flicker)
+        // ──────────────────────────────────────────────────────────
 
         protected override CreateParams CreateParams
         {
             get
             {
                 CreateParams cp = base.CreateParams;
-                cp.ExStyle = cp.ExStyle | 0x2000000;
+                cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
                 return cp;
             }
         }

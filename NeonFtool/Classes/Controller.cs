@@ -1,4 +1,4 @@
-﻿using Ftool.Libraries;
+using NeonFtool.Libraries;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,70 +11,73 @@ namespace NeonFtool.Classes
 {
     internal class Controller
     {
-        private ControlCollection Controls;
+        private readonly ControlCollection _controls;
 
         public Controller(ControlCollection controls)
         {
-            Controls = controls;
+            _controls = controls;
         }
+
+        /// <summary>
+        /// Extracts the trailing integer from a control's Name (e.g. "spammerGroupBox3" → 3).
+        /// Returns -1 if no number is found.
+        /// </summary>
         public static int GetIndex(Control control)
         {
-            int index;
-
-            if (int.TryParse(Regex.Match(control.Name, @"\d+").Value, out index))
-            {
-                return index;
-            }
-
-            return -1;
+            return int.TryParse(Regex.Match(control.Name, @"\d+").Value, out int index)
+                ? index
+                : -1;
         }
 
+        /// <summary>
+        /// Returns all GroupBox controls across every TabPage in the first TabControl.
+        /// </summary>
         public IEnumerable<GroupBox> GetAllGroupBox()
         {
-            GroupBox[] groupBoxes = Array.Empty<GroupBox>();
-            TabPage[] tabPages = Controls.OfType<TabControl>().First().Controls.OfType<TabPage>().ToArray();
+            TabPage[] tabPages = _controls
+                .OfType<TabControl>()
+                .First()
+                .Controls
+                .OfType<TabPage>()
+                .ToArray();
 
-            foreach (TabPage tabPage in tabPages)
-            {
-                groupBoxes = groupBoxes.Concat(tabPage.Controls.OfType<GroupBox>().ToArray()).ToArray();
-            }
-
-            return groupBoxes;
+            return tabPages.SelectMany(tab => tab.Controls.OfType<GroupBox>());
         }
 
+        /// <summary>
+        /// Returns all ComboBoxes named "windowComboBox..." inside every GroupBox.
+        /// </summary>
         public ComboBox[] GetAllWindowComboBox()
         {
-            List<ComboBox> list = new List<ComboBox>();
-
-            GroupBox[] groupBoxes = GetAllGroupBox().ToArray();
-
-            foreach (GroupBox groupBox in groupBoxes)
-            {
-                IEnumerable<ComboBox> comboBoxes = groupBox.Controls.OfType<ComboBox>().Where(x => x.Name.StartsWith("windowComboBox"));
-
-                foreach (ComboBox comboBox in comboBoxes)
-                {
-                    list.Add(comboBox);
-                }
-            }
-
-            return list.ToArray();
+            return GetAllGroupBox()
+                .SelectMany(gb => gb.Controls
+                    .OfType<ComboBox>()
+                    .Where(cb => cb.Name.StartsWith("windowComboBox")))
+                .ToArray();
         }
 
-        public GroupBox GetGroupBox(int index)
-        {
-            return Controls.OfType<GroupBox>().Where(x => x.Name == "spammerGroupBox" + index).First();
-        }
-
+        /// <summary>
+        /// Finds the first child control of <paramref name="groupBox"/> whose name
+        /// starts with <paramref name="component"/>.
+        /// </summary>
         public static Control GetControlOnGroupBox(GroupBox groupBox, string component)
         {
-            return groupBox.Controls.OfType<Control>().Where(x => x.Name.StartsWith(component)).First();
+            return groupBox.Controls
+                .OfType<Control>()
+                .First(c => c.Name.StartsWith(component));
         }
 
-        public static Process GetProcessByGroupBox(ProcessManager window, GroupBox groupBox)
+        /// <summary>
+        /// Returns the process currently selected in the window ComboBox of a GroupBox.
+        /// </summary>
+        public static Process GetProcessByGroupBox(ProcessManager processManager, GroupBox groupBox)
         {
-            ComboBoxItem windowComboBox = (Controller.GetControlOnGroupBox(groupBox, "windowComboBox") as ComboBox).SelectedItem as ComboBoxItem;
-            return window.GetProcessByPID((int)windowComboBox.Value);
+            ComboBoxItem item = (GetControlOnGroupBox(groupBox, "windowComboBox") as ComboBox)
+                ?.SelectedItem as ComboBoxItem;
+
+            return item != null
+                ? processManager.GetProcessByPID((int)item.Value)
+                : null;
         }
     }
 }

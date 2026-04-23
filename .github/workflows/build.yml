@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - "v*"
   pull_request:
     branches:
       - master
@@ -16,26 +18,43 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
+      - name: Restore dependencies
+        run: dotnet restore "NeonFtool.sln"
 
-      - name: Restore NuGet packages
-        run: nuget restore "NeonFtool.sln"
-
-      - name: Build solution
-        run: msbuild "NeonFtool.sln" /m /p:Configuration=Release /p:Platform="Any CPU"
+      - name: Publish single-file executable
+        run: dotnet publish "NeonFtool/NeonFtool.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o "artifacts/publish"
 
       - name: Create ZIP artifact
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path "artifacts" | Out-Null
-          Compress-Archive -Path "NeonFtool/bin/Release/*" -DestinationPath "artifacts/NeonFtool-Release.zip" -Force
+          Compress-Archive -Path "artifacts/publish/*" -DestinationPath "artifacts/NeonFtool-Release.zip" -Force
 
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v4
         with:
           name: NeonFtool-Release
           path: artifacts/NeonFtool-Release.zip
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download ZIP artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: NeonFtool-Release
+          path: artifacts
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/NeonFtool-Release.zip

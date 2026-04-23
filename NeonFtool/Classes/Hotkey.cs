@@ -1,4 +1,4 @@
-﻿using NeonFtool.Libraries;
+using NeonFtool.Libraries;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -8,64 +8,63 @@ namespace NeonFtool.Classes
 {
     internal class Hotkey
     {
-        private KeyboardHook hook;
-        private IDictionary<int, IDictionary<string, object>> hotkeyList = new Dictionary<int, IDictionary<string, object>>();
+        private readonly KeyboardHook _hook;
+
+        // Maps spammer index → registration info
+        private readonly Dictionary<int, HotkeyRegistration> _registrations = new();
 
         public Hotkey()
         {
-            hook = new KeyboardHook();
-            hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(HotkeyPressed);
+            _hook = new KeyboardHook();
+            _hook.KeyPressed += OnHotkeyPressed;
         }
 
+        /// <summary>
+        /// Registers (or replaces) the hotkey for the given spammer index.
+        /// Pass <see cref="Keys.None"/> to clear the hotkey.
+        /// </summary>
         public void Set(int index, ModifierKeys modifier, Keys key, Button button)
         {
-            if (key == Keys.None)
-            {
-                Remove(index);
-                return;
-            }
+            // Always remove any existing registration for this slot first.
+            Remove(index);
 
-            hotkeyList[index] = new Dictionary<string, object>();
-            hotkeyList[index]["index"] = hook.Register(modifier, key);
-            hotkeyList[index]["key"] = key;
-            hotkeyList[index]["button"] = button;
+            if (key == Keys.None)
+                return;
+
+            int registrationId = _hook.Register(modifier, key);
+            _registrations[index] = new HotkeyRegistration(registrationId, key, button);
         }
 
+        /// <summary>
+        /// Unregisters the hotkey for the given spammer index if one exists.
+        /// </summary>
         public void Remove(int index)
         {
-            if (!hotkeyList.ContainsKey(index)) return;
+            if (!_registrations.TryGetValue(index, out HotkeyRegistration reg))
+                return;
 
-            try
-            {
-                this.hook.Unregister((int)hotkeyList[index]["index"]);
-                hotkeyList.Remove(index);
-            }
-            catch (KeyNotFoundException)
-            { }
+            _hook.Unregister(reg.Id);
+            _registrations.Remove(index);
         }
 
         public void Dispose()
         {
-            this.hook.Dispose();
+            _hook.Dispose();
         }
 
-        private void HotkeyPressed(object sender, KeyPressedEventArgs e)
+        private void OnHotkeyPressed(object sender, KeyPressedEventArgs e)
         {
-            foreach (KeyValuePair<int, IDictionary<string, object>> entry in hotkeyList)
+            foreach (HotkeyRegistration reg in _registrations.Values)
             {
-                Keys key = (Keys)entry.Value["key"];
-                Button button = entry.Value["button"] as Button;
-
-                if (e.Key == key)
+                if (e.Key == reg.Key)
                 {
-                    button.Invoke((MethodInvoker)delegate ()
-                    {
-                        button.PerformClick();
-                    });
-
+                    reg.Button.Invoke((MethodInvoker)reg.Button.PerformClick);
                     break;
                 }
             }
         }
+
+        /// <summary>Immutable record holding a single hotkey registration.</summary>
+        private sealed record HotkeyRegistration(int Id, Keys Key, Button Button);
     }
 }

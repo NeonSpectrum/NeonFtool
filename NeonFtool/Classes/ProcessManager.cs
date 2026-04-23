@@ -1,4 +1,4 @@
-﻿using NeonFtool.Libraries;
+using NeonFtool.Libraries;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -7,33 +7,35 @@ namespace NeonFtool.Classes
 {
     internal class ProcessManager
     {
-        private Process[] processes;
-        private Settings settings;
+        private Process[] _processes = Array.Empty<Process>();
+        private readonly Settings _settings;
 
         public ProcessManager()
         {
-            settings = Settings.Get();
+            _settings = Settings.Get();
         }
 
-        public Process[] GetProcessList()
-        {
-            return processes;
-        }
+        public Process[] GetProcessList() => _processes;
 
+        /// <summary>
+        /// Refreshes the internal process list, filtering to only target processes,
+        /// and appends the PID to each window title for unique identification.
+        /// </summary>
         public ProcessManager RefreshProcessList()
         {
-            processes = (from process in Process.GetProcesses()
-                         where settings.TargetProcess.Any(name => name == process.ProcessName + ".exe")
-                         select process).OrderBy(p => p.StartTime).ToArray();
+            _processes = Process.GetProcesses()
+                .Where(p => _settings.TargetProcess.Any(name => name == p.ProcessName + ".exe"))
+                .OrderBy(SafeStartTime)
+                .ToArray();
 
-            foreach (Process process in processes)
+            foreach (Process process in _processes)
             {
                 string title = process.MainWindowTitle;
+                string pidTag = $" PID -> {process.Id}";
 
-                if (!title.Contains("PID -> " + process.Id))
+                if (!title.Contains(pidTag))
                 {
-                    title += " PID -> " + process.Id;
-                    Function.SetWindowText(process.MainWindowHandle, title);
+                    Function.SetWindowText(process.MainWindowHandle, title + pidTag);
                 }
             }
 
@@ -42,39 +44,27 @@ namespace NeonFtool.Classes
 
         public Process GetProcessByWindowTitle(string name)
         {
-            try
-            {
-                return (from process in processes
-                        where process.MainWindowTitle == name
-                        select process).First();
-            }
-            catch (InvalidOperationException)
-            {
-                return null;
-            }
+            return _processes.FirstOrDefault(p => p.MainWindowTitle == name);
         }
 
         public Process GetProcessByPID(int pid)
         {
-            try
-            {
-                return (from process in processes
-                        where process.Id == pid
-                        select process).First();
-            }
-            catch (InvalidOperationException)
-            {
-                return null;
-            }
+            return _processes.FirstOrDefault(p => p.Id == pid);
         }
 
-        public static bool ShowWindow(IntPtr handler)
+        public static bool ShowWindow(IntPtr handle) =>
+            Function.ShowWindow(handle, Constants.SW_SHOWNOACTIVATE);
+
+        public static bool HideWindow(IntPtr handle) =>
+            Function.ShowWindow(handle, Constants.SW_HIDE);
+
+        /// <summary>
+        /// Safe wrapper for StartTime — some system processes throw on access.
+        /// </summary>
+        private static DateTime SafeStartTime(Process p)
         {
-            return Function.ShowWindow(handler, Constants.SW_SHOWNOACTIVATE);
-        }
-        public static bool HideWindow(IntPtr handler)
-        {
-            return Function.ShowWindow(handler, Constants.SW_HIDE);
+            try { return p.StartTime; }
+            catch { return DateTime.MinValue; }
         }
     }
 }

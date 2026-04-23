@@ -1,4 +1,4 @@
-﻿using NeonFtool.Classes;
+using NeonFtool.Classes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,31 +12,28 @@ namespace NeonFtool.Forms
         public delegate void CloseEvent();
         public CloseEvent WindowClosed;
 
-        Settings settings;
-
-        ProcessManager processManager;
-        List<Process> leftProcesses;
-        public List<Process> rightProcesses;
+        private Settings _settings;
+        private readonly ProcessManager _processManager;
+        private readonly List<Process> _leftProcesses  = new();
+        public  readonly List<Process> RightProcesses  = new();
 
         public WindowManagerForm()
         {
             InitializeComponent();
 
-            settings = Settings.Get();
-            processManager = new ProcessManager();
-            leftProcesses = new List<Process>();
-            rightProcesses = new List<Process>();
+            _settings      = Settings.Get();
+            _processManager = new ProcessManager();
         }
 
         private void WindowManagementForm_Load(object sender, EventArgs e)
         {
-            this.Text = Constants.WINDOW_MANAGER_TITLE;
+            Text = Constants.WINDOW_MANAGER_TITLE;
 
             LoadSettings();
             refreshButton.PerformClick();
 
             cpuPriorityCheckBox.CheckedChanged += CheckBoxChanged;
-            hideWindowCheckBox.CheckedChanged += CheckBoxChanged;
+            hideWindowCheckBox.CheckedChanged  += CheckBoxChanged;
         }
 
         private void refreshButton_Click(object sender, EventArgs e)
@@ -47,69 +44,60 @@ namespace NeonFtool.Forms
 
         private void RefreshData()
         {
-            leftListBox.DataSource = leftProcesses.OrderBy(p => p.StartTime).Select(p => p.MainWindowTitle).ToList();
-            rightListBox.DataSource = rightProcesses.OrderBy(p => p.StartTime).Select(p => p.MainWindowTitle).ToList();
+            leftListBox.DataSource  = _leftProcesses .OrderBy(SafeStartTime).Select(p => p.MainWindowTitle).ToList();
+            rightListBox.DataSource = RightProcesses.OrderBy(SafeStartTime).Select(p => p.MainWindowTitle).ToList();
         }
 
         private void GetClients()
         {
-            leftProcesses.Clear();
+            _leftProcesses.Clear();
 
-            foreach (Process process in processManager.RefreshProcessList().GetProcessList())
+            foreach (Process process in _processManager.RefreshProcessList().GetProcessList())
             {
-                if (!rightProcesses.Any(p => p.MainWindowTitle == process.MainWindowTitle))
-                {
-                    leftProcesses.Add(process);
-                }
+                if (!RightProcesses.Any(p => p.MainWindowTitle == process.MainWindowTitle))
+                    _leftProcesses.Add(process);
             }
         }
 
-        private void SetStatus(string direction, Process process)
+        private void SetStatus(bool toRight, Process process)
         {
-            if (direction == "left")
+            if (toRight)
+            {
+                if (hideWindowCheckBox.Checked)
+                    ProcessManager.HideWindow(process.MainWindowHandle);
+                else
+                    ProcessManager.ShowWindow(process.MainWindowHandle);
+
+                process.PriorityClass = cpuPriorityCheckBox.Checked
+                    ? ProcessPriorityClass.Idle
+                    : ProcessPriorityClass.Normal;
+            }
+            else
             {
                 ProcessManager.ShowWindow(process.MainWindowHandle);
                 process.PriorityClass = ProcessPriorityClass.Normal;
-            }
-            else if (direction == "right")
-            {
-                if (hideWindowCheckBox.Checked)
-                {
-                    ProcessManager.HideWindow(process.MainWindowHandle);
-                }
-                else
-                {
-                    ProcessManager.ShowWindow(process.MainWindowHandle);
-                }
-
-                process.PriorityClass = cpuPriorityCheckBox.Checked ? ProcessPriorityClass.Idle : ProcessPriorityClass.Normal;
             }
         }
 
         private void CheckBoxChanged(object sender, EventArgs e)
         {
-            var list = rightListBox.SelectedItems;
-
-            foreach (string item in list)
+            foreach (string item in rightListBox.SelectedItems)
             {
-                Process process = processManager.GetProcessByWindowTitle(item);
-
-                SetStatus("right", process);
+                Process process = _processManager.GetProcessByWindowTitle(item);
+                if (process != null) SetStatus(toRight: true, process);
             }
         }
 
         private void changeToHiddenButton_Click(object sender, EventArgs e)
         {
-            var list = leftListBox.SelectedItems;
-
-            foreach (string item in list)
+            foreach (string item in leftListBox.SelectedItems.Cast<string>().ToList())
             {
-                Process process = processManager.GetProcessByWindowTitle(item);
+                Process process = _processManager.GetProcessByWindowTitle(item);
+                if (process == null) continue;
 
-                SetStatus("right", process);
-
-                rightProcesses.Add(process);
-                leftProcesses.Remove(process);
+                SetStatus(toRight: true, process);
+                RightProcesses.Add(process);
+                _leftProcesses.Remove(process);
             }
 
             RefreshData();
@@ -117,16 +105,14 @@ namespace NeonFtool.Forms
 
         private void changeToShownButton_Click(object sender, EventArgs e)
         {
-            var list = rightListBox.SelectedItems;
-
-            foreach (string item in list)
+            foreach (string item in rightListBox.SelectedItems.Cast<string>().ToList())
             {
-                Process process = processManager.GetProcessByWindowTitle(item);
+                Process process = _processManager.GetProcessByWindowTitle(item);
+                if (process == null) continue;
 
-                SetStatus("left", process);
-
-                rightProcesses.Remove(process);
-                leftProcesses.Add(process);
+                SetStatus(toRight: false, process);
+                RightProcesses.Remove(process);
+                _leftProcesses.Add(process);
             }
 
             RefreshData();
@@ -134,26 +120,29 @@ namespace NeonFtool.Forms
 
         private void LoadSettings()
         {
-            cpuPriorityCheckBox.Checked = (bool)Settings.GetOrDefault(settings.WindowManager, "cpuPriorityToIdle", false);
-            hideWindowCheckBox.Checked = (bool)Settings.GetOrDefault(settings.WindowManager, "hideWindow", false);
-
-            settings.Save();
+            cpuPriorityCheckBox.Checked = (bool)Settings.GetOrDefault(_settings.WindowManager, "cpuPriorityToIdle", false);
+            hideWindowCheckBox.Checked  = (bool)Settings.GetOrDefault(_settings.WindowManager, "hideWindow",        false);
         }
 
         private void SaveSettings()
         {
-            settings.WindowManager["cpuPriorityToIdle"] = cpuPriorityCheckBox.Checked;
-            settings.WindowManager["hideWindow"] = hideWindowCheckBox.Checked;
-
-            settings.Save();
+            _settings.WindowManager["cpuPriorityToIdle"] = cpuPriorityCheckBox.Checked;
+            _settings.WindowManager["hideWindow"]        = hideWindowCheckBox.Checked;
+            _settings.Save();
         }
 
         private void WindowManager_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveSettings();
-            WindowClosed();
+            WindowClosed?.Invoke();
             Hide();
             e.Cancel = true;
+        }
+
+        private static DateTime SafeStartTime(Process p)
+        {
+            try { return p.StartTime; }
+            catch { return DateTime.MinValue; }
         }
     }
 }

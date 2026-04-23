@@ -1,4 +1,4 @@
-﻿using nucs.JsonSettings;
+using nucs.JsonSettings;
 using System.Collections.Generic;
 
 namespace NeonFtool.Classes
@@ -7,24 +7,27 @@ namespace NeonFtool.Classes
     {
         public override string FileName { get; set; } = "settings.json";
 
-        public string[] TargetProcess { get; set; } = new string[] { "Client.exe", "Neuz.exe" };
+        public string[] TargetProcess { get; set; } = { "Client.exe", "Neuz.exe" };
 
-        public IDictionary<int, IDictionary<string, object>> Spammer = new Dictionary<int, IDictionary<string, object>>();
+        public Dictionary<int, Dictionary<string, object>> Spammer { get; set; } = new();
 
-        public IDictionary<string, object> DumpCleaner = new Dictionary<string, object>();
+        public Dictionary<string, object> DumpCleaner { get; set; } = new();
 
-        public IDictionary<string, object> WindowManager = new Dictionary<string, object>();
+        public Dictionary<string, object> WindowManager { get; set; } = new();
 
-        public static Settings Get()
-        {
-            return JsonSettings.Load<Settings>();
-        }
+        public static Settings Get() => JsonSettings.Load<Settings>();
 
-        public static object GetOrDefault<T, U>(IDictionary<T, U> dictionary, object key, object defaultValue = null)
+        /// <summary>
+        /// Returns <paramref name="dictionary"/>[<paramref name="key"/>] if it exists,
+        /// otherwise <paramref name="defaultValue"/>.
+        /// </summary>
+        public static object GetOrDefault<TKey, TValue>(
+            IDictionary<TKey, TValue> dictionary,
+            TKey key,
+            object defaultValue = null)
         {
             if (dictionary == null) return defaultValue;
-
-            return dictionary.ContainsKey((T)key) ? dictionary[(T)key] : defaultValue;
+            return dictionary.TryGetValue(key, out TValue value) ? value : defaultValue;
         }
     }
 }

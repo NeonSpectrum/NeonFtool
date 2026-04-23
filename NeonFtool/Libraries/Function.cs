@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 namespace NeonFtool.Libraries
 {
-    internal class Function
+    internal static class Function
     {
         [DllImport("user32.dll")]
-        public static extern bool PostMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
+        public static extern bool PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
 
         [DllImport("user32.dll")]
         public static extern int SetWindowText(IntPtr hWnd, string text);
