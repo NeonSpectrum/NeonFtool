@@ -1,4 +1,4 @@
-﻿
+
 namespace NeonFtool.Forms
 {
     partial class AboutForm
@@ -29,7 +29,7 @@ namespace NeonFtool.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
+
             pictureBox1 = new System.Windows.Forms.PictureBox();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
@@ -39,7 +39,7 @@ namespace NeonFtool.Forms
             // 
             // pictureBox1
             // 
-            pictureBox1.Image = NeonFtool.Properties.Resources.logo;
+            pictureBox1.Image = global::NeonFtool.Properties.Resources.logo;
             pictureBox1.ImageLocation = "";
             pictureBox1.Location = new System.Drawing.Point(141, 14);
             pictureBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -91,7 +91,7 @@ namespace NeonFtool.Forms
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
-            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Icon = global::NeonFtool.Properties.Resources.logo_ico;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MinimizeBox = false;
             Name = "AboutForm";
