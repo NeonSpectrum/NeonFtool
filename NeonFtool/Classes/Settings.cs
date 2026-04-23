@@ -15,7 +15,18 @@ namespace NeonFtool.Classes
 
         public Dictionary<string, object> WindowManager { get; set; } = new();
 
-        public static Settings Get() => JsonSettings.Load<Settings>();
+        public static Settings Get()
+        {
+            var appData = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+            var appDir  = System.IO.Path.Combine(appData, "NeonFtool");
+            
+            // Ensure the directory exists
+            if (!System.IO.Directory.Exists(appDir))
+                System.IO.Directory.CreateDirectory(appDir);
+
+            var path = System.IO.Path.Combine(appDir, "settings.json");
+            return JsonSettings.Load<Settings>(path);
+        }
 
         /// <summary>
         /// Returns <paramref name="dictionary"/>[<paramref name="key"/>] if it exists,
