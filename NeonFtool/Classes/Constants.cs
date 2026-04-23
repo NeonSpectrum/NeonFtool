@@ -5,7 +5,7 @@ namespace NeonFtool.Classes
 {
     internal static class Constants
     {
-        public const string MAIN_TITLE         = "NeonFtool 0.1";
+        public const string MAIN_TITLE         = "NeonFtool 1.0";
         public const string DUMP_CLEANER_TITLE = "Dump Cleaner";
         public const string WINDOW_MANAGER_TITLE = "Window Manager";
 
