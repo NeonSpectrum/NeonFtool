@@ -68,7 +68,7 @@ namespace NeonFtool.Forms
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(104, 30);
             label2.TabIndex = 0;
-            label2.Text = "Copyright © 2026 \r\nVersion 1.0";
+            label2.Text = "";
             label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label3

@@ -1,4 +1,4 @@
-﻿using System.Windows.Forms;
+using System.Windows.Forms;
 
 namespace NeonFtool.Forms
 {
@@ -7,6 +7,7 @@ namespace NeonFtool.Forms
         public AboutForm()
         {
             InitializeComponent();
+            label2.Text = $"Copyright © {System.DateTime.Now.Year} \r\nVersion {Classes.Constants.VERSION}";
         }
     }
 }
