@@ -65,6 +65,18 @@ namespace NeonFtool.Classes
         }
 
         /// <summary>Immutable record holding a single hotkey registration.</summary>
-        private sealed record HotkeyRegistration(int Id, Keys Key, Button Button);
+        private sealed class HotkeyRegistration
+        {
+            public int Id { get; }
+            public Keys Key { get; }
+            public Button Button { get; }
+
+            public HotkeyRegistration(int id, Keys key, Button button)
+            {
+                Id = id;
+                Key = key;
+                Button = button;
+            }
+        }
     }
 }
