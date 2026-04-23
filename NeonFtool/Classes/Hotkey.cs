@@ -32,7 +32,7 @@ namespace NeonFtool.Classes
                 return;
 
             int registrationId = _hook.Register(modifier, key);
-            _registrations[index] = new HotkeyRegistration(registrationId, key, button);
+            _registrations[index] = new HotkeyRegistration(registrationId, modifier, key, button);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace NeonFtool.Classes
         {
             foreach (HotkeyRegistration reg in _registrations.Values)
             {
-                if (e.Key == reg.Key)
+                if (e.Key == reg.Key && e.Modifier == reg.Modifier)
                 {
                     reg.Button.Invoke((MethodInvoker)reg.Button.PerformClick);
                     break;
@@ -68,12 +68,14 @@ namespace NeonFtool.Classes
         private sealed class HotkeyRegistration
         {
             public int Id { get; }
+            public ModifierKeys Modifier { get; }
             public Keys Key { get; }
             public Button Button { get; }
 
-            public HotkeyRegistration(int id, Keys key, Button button)
+            public HotkeyRegistration(int id, ModifierKeys modifier, Keys key, Button button)
             {
                 Id = id;
+                Modifier = modifier;
                 Key = key;
                 Button = button;
             }
