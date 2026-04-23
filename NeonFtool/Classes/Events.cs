@@ -97,9 +97,11 @@ namespace NeonFtool.Classes
             int index = Controller.GetIndex(comboBox);
 
             // Determine modifier from the display label stored in ComboBoxItem.Text
-            ModifierKeys modifier = selected.Text.Contains("CTRL")
-                ? ModifierKeys.Control
-                : ModifierKeys.Alt;
+            ModifierKeys modifier = ModifierKeys.None;
+            if (selected.Text.Contains("CTRL"))
+                modifier = ModifierKeys.Control;
+            else if (selected.Text.Contains("ALT"))
+                modifier = ModifierKeys.Alt;
 
             try
             {
