@@ -69,8 +69,12 @@ namespace NeonFtool
 
             foreach (ComboBox comboBox in _controller.GetAllWindowComboBox())
             {
-                // Remember previously selected title so we can restore it.
-                string lastTitle = (comboBox.SelectedItem as ComboBoxItem)?.Text ?? "";
+                // If the spammer is running, the ComboBox is disabled.
+                // We should skip refreshing to avoid interrupting the active selection.
+                if (!comboBox.Enabled) continue;
+
+                // Remember previously selected PID so we can restore it accurately.
+                int lastPid = (int)((comboBox.SelectedItem as ComboBoxItem)?.Value ?? -1);
 
                 comboBox.Items.Clear();
                 comboBox.Items.Add(new ComboBoxItem { Text = Constants.SELECT_WINDOW, Value = -1 });
@@ -81,7 +85,7 @@ namespace NeonFtool
                 {
                     comboBox.Items.Add(new ComboBoxItem { Text = process.MainWindowTitle, Value = process.Id });
 
-                    if (process.MainWindowTitle == lastTitle)
+                    if (process.Id == lastPid)
                         restoreIndex = comboBox.Items.Count - 1;
                 }
 
@@ -170,12 +174,32 @@ namespace NeonFtool
                 ComboBox windowCb = (ComboBox)Controller.GetControlOnGroupBox(groupBox, "windowComboBox");
                 if (slot.TryGetValue("windowComboBox", out object savedWindow))
                 {
+                    string savedText = savedWindow.ToString();
+                    bool found = false;
+
+                    // First pass: try exact match (handles same-session or exact title match)
                     for (int i = 0; i < windowCb.Items.Count; i++)
                     {
-                        if (((ComboBoxItem)windowCb.Items[i]).Text == savedWindow.ToString())
+                        if (((ComboBoxItem)windowCb.Items[i]).Text == savedText)
                         {
                             windowCb.SelectedIndex = i;
+                            found = true;
                             break;
+                        }
+                    }
+
+                    // Second pass: try matching base title (ignore PID tag differences)
+                    if (!found && savedText != Constants.SELECT_WINDOW && savedText != "")
+                    {
+                        string baseSaved = savedText.Split(new[] { " PID ->" }, StringSplitOptions.None)[0];
+                        for (int i = 1; i < windowCb.Items.Count; i++)
+                        {
+                            string itemText = ((ComboBoxItem)windowCb.Items[i]).Text;
+                            if (itemText.StartsWith(baseSaved))
+                            {
+                                windowCb.SelectedIndex = i;
+                                break;
+                            }
                         }
                     }
                 }

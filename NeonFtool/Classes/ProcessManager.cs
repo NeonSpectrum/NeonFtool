@@ -36,6 +36,7 @@ namespace NeonFtool.Classes
                 if (!title.Contains(pidTag))
                 {
                     Function.SetWindowText(process.MainWindowHandle, title + pidTag);
+                    process.Refresh(); // Update cached MainWindowTitle
                 }
             }
 
