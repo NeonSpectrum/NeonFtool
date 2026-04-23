@@ -246,7 +246,7 @@ namespace NeonFtool
             this.dumpCleanerToolStripMenuItem,
             this.windowManagerToolStripMenuItem});
             this.toolsMenuStrip.Name = "toolsMenuStrip";
-            this.toolsMenuStrip.Size = new System.Drawing.Size(46, 20);
+            this.toolsMenuStrip.Size = new System.Drawing.Size(47, 20);
             this.toolsMenuStrip.Text = "Tools";
             // 
             // dumpCleanerToolStripMenuItem

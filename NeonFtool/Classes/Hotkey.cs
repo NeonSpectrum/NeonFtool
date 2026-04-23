@@ -17,7 +17,7 @@ namespace NeonFtool.Classes
             hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(HotkeyPressed);
         }
 
-        public void Set(int index, Keys key, Button button)
+        public void Set(int index, ModifierKeys modifier, Keys key, Button button)
         {
             if (key == Keys.None)
             {
@@ -26,7 +26,7 @@ namespace NeonFtool.Classes
             }
 
             hotkeyList[index] = new Dictionary<string, object>();
-            hotkeyList[index]["index"] = hook.Register(ModifierKeys.Control, key);
+            hotkeyList[index]["index"] = hook.Register(modifier, key);
             hotkeyList[index]["key"] = key;
             hotkeyList[index]["button"] = button;
         }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace NeonFtool.Classes
 {
@@ -114,14 +115,15 @@ namespace NeonFtool.Classes
             }
 
             int index = Controller.GetIndex(comboBox);
+            ModifierKeys modifier = comboBoxItem.Text.Contains("CTRL") ? ModifierKeys.Control : ModifierKeys.Alt;
 
             try
             {
-                hotkey.Set(index, (Keys)comboBoxItem.Value, Controller.GetControlOnGroupBox(groupBox, "startButton") as Button);
+                hotkey.Set(index, modifier, (Keys)comboBoxItem.Value, Controller.GetControlOnGroupBox(groupBox, "startButton") as Button);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Hotkey already registered.", Constants.MAIN_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(ex.Message, Constants.MAIN_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 comboBox.SelectedIndex = 0;
             }
         }

@@ -62,6 +62,16 @@ namespace NeonFtool.Classes
             {Keys.F8, "CTRL + F8"},
             {Keys.F9, "CTRL + F9"},
             {Keys.F10, "CTRL + F10"},
+            {Keys.F1, "ALT + F1"},
+            {Keys.F2, "ALT + F2"},
+            {Keys.F3, "ALT + F3"},
+            {Keys.F4, "ALT + F4"},
+            {Keys.F5, "ALT + F5"},
+            {Keys.F6, "ALT + F6"},
+            {Keys.F7, "ALT + F7"},
+            {Keys.F8, "CTRL + F8"},
+            {Keys.F9, "ALT + F9"},
+            {Keys.F10, "ALT + F10"},
         };
 
         public static Constants Get()

@@ -52,15 +52,6 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <Target Name="ILMerge">
-    <!-- the ILMergePath property points to the location of ILMerge.exe console application -->
-    <Exec Command="cd bin\Release\net472\ &amp;&amp; %USERPROFILE%\.nuget\packages\ilmerge\3.0.41\tools\net452\ILMerge.exe NeonFtool.exe /out:NeonFtool.exe Newtonsoft.Json.dll nucs.JsonSettings.dll" />
-  </Target>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release ( &quot;$(DevEnvDir)..\..\MSBuild\Current\Bin\MSBuild.exe&quot; /t:ILMerge )" />
-  </Target>
-
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="del /s /q $(OutDir)NeonFtool.exe&#xD;&#xA;del /s /q $(OutDir)NeonFtool.pdb" />
   </Target>
