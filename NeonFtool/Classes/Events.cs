@@ -125,7 +125,7 @@ namespace NeonFtool.Classes
 
             try
             {
-                _hotkey.Set(index, modifier, (Keys)selected.Value, (Button)Controller.GetControlOnGroupBox(groupBox, "startButton"));
+                _hotkey.Set(index, modifier, (Keys)selected.Value, (Button)Controller.GetControlOnGroupBox(groupBox, "startButton"), groupBox);
             }
             catch (Exception ex)
             {

@@ -12,9 +12,11 @@ namespace NeonFtool.Classes
 
         // Maps spammer index → registration info
         private readonly Dictionary<int, HotkeyRegistration> _registrations = new();
+        private readonly ProcessManager _processManager;
 
-        public Hotkey()
+        public Hotkey(ProcessManager processManager)
         {
+            _processManager = processManager;
             _hook = new KeyboardHook();
             _hook.KeyPressed += OnHotkeyPressed;
         }
@@ -23,7 +25,7 @@ namespace NeonFtool.Classes
         /// Registers (or replaces) the hotkey for the given spammer index.
         /// Pass <see cref="Keys.None"/> to clear the hotkey.
         /// </summary>
-        public void Set(int index, ModifierKeys modifier, Keys key, Button button)
+        public void Set(int index, ModifierKeys modifier, Keys key, Button button, GroupBox groupBox)
         {
             // Always remove any existing registration for this slot first.
             Remove(index);
@@ -32,7 +34,7 @@ namespace NeonFtool.Classes
                 return;
 
             int registrationId = _hook.Register(modifier, key);
-            _registrations[index] = new HotkeyRegistration(registrationId, modifier, key, button);
+            _registrations[index] = new HotkeyRegistration(registrationId, modifier, key, button, groupBox);
         }
 
         /// <summary>
@@ -54,11 +56,46 @@ namespace NeonFtool.Classes
 
         private void OnHotkeyPressed(object sender, KeyPressedEventArgs e)
         {
+            IntPtr foregroundWindow = Function.GetForegroundWindow();
+            if (foregroundWindow == IntPtr.Zero) return;
+
+            Function.GetWindowThreadProcessId(foregroundWindow, out uint activePid);
+
             foreach (HotkeyRegistration reg in _registrations.Values)
             {
                 if (e.Key == reg.Key && e.Modifier == reg.Modifier)
                 {
-                    reg.Button.Invoke((MethodInvoker)reg.Button.PerformClick);
+                    // Find the process currently selected for this specific spammer
+                    Process targetProcess = Controller.GetProcessByGroupBox(_processManager, reg.GroupBox);
+
+                    if (targetProcess != null)
+                    {
+                        try
+                        {
+                            // Get the process of the active foreground window
+                            using (Process activeProcess = Process.GetProcessById((int)activePid))
+                            {
+                                string activeName = activeProcess.ProcessName + ".exe";
+                                string targetName = targetProcess.ProcessName + ".exe";
+
+                                // Compare by name so it works across restarts
+                                if (activeName.Equals(targetName, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    reg.Button.Invoke((MethodInvoker)reg.Button.PerformClick);
+                                    e.Handled = true; 
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // Process might have exited just now
+                        }
+                    }
+                    else
+                    {
+                        // No specific window selected? Treat it as a global hotkey
+                        reg.Button.Invoke((MethodInvoker)reg.Button.PerformClick);
+                    }
                     break;
                 }
             }
@@ -71,13 +108,15 @@ namespace NeonFtool.Classes
             public ModifierKeys Modifier { get; }
             public Keys Key { get; }
             public Button Button { get; }
+            public GroupBox GroupBox { get; }
 
-            public HotkeyRegistration(int id, ModifierKeys modifier, Keys key, Button button)
+            public HotkeyRegistration(int id, ModifierKeys modifier, Keys key, Button button, GroupBox groupBox)
             {
                 Id = id;
                 Modifier = modifier;
                 Key = key;
                 Button = button;
+                GroupBox = groupBox;
             }
         }
     }

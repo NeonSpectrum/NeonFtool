@@ -42,8 +42,6 @@ namespace NeonFtool.Classes
             new Dictionary<int, string>
             {
                 { -1,  "" },
-                { 192, "`"  },
-                { 48,  "0" },
                 { 49,  "1" },
                 { 50,  "2" },
                 { 51,  "3" },
@@ -53,6 +51,7 @@ namespace NeonFtool.Classes
                 { 55,  "7" },
                 { 56,  "8" },
                 { 57,  "9" },
+                { 48,  "0" },
             };
 
         // Global hotkey combinations — uses a List to avoid duplicate-key exceptions.
@@ -63,7 +62,6 @@ namespace NeonFtool.Classes
                 ("",     Keys.None,      ""),
                 ("",     Keys.Oemtilde,  "`"),
                 ("CTRL", Keys.Oemtilde,  "CTRL + `"),
-                ("ALT",  Keys.Oemtilde,  "ALT + `"),
                 ("CTRL", Keys.F1,        "CTRL + F1"),
                 ("CTRL", Keys.F2,        "CTRL + F2"),
                 ("CTRL", Keys.F3,        "CTRL + F3"),
@@ -74,6 +72,7 @@ namespace NeonFtool.Classes
                 ("CTRL", Keys.F8,        "CTRL + F8"),
                 ("CTRL", Keys.F9,        "CTRL + F9"),
                 ("CTRL", Keys.F10,       "CTRL + F10"),
+                ("ALT",  Keys.Oemtilde,  "ALT + `"),
                 ("ALT",  Keys.F1,        "ALT + F1"),
                 ("ALT",  Keys.F2,        "ALT + F2"),
                 ("ALT",  Keys.F3,        "ALT + F3"),

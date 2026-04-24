@@ -25,7 +25,7 @@ namespace NeonFtool
         public NeonFtool()
         {
             _processManager   = new ProcessManager();
-            _hotkey           = new Hotkey();
+            _hotkey           = new Hotkey(_processManager);
             _settings         = Settings.Get();
             _dumpCleanerForm  = new DumpCleanerForm();
             _windowManagerForm = new WindowManagerForm();
