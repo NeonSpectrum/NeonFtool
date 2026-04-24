@@ -2,8 +2,10 @@ using NeonFtool.Libraries;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
+using NeonFtool.Forms;
 
 namespace NeonFtool.Classes
 {
@@ -13,6 +15,7 @@ namespace NeonFtool.Classes
         private readonly Hotkey _hotkey;
         private readonly Controller _controller;
         private readonly Dictionary<int, Spam> _spamList = new();
+        private readonly Dictionary<IntPtr, OverlayForm> _overlays = new();
 
         public Events(ProcessManager processManager, Hotkey hotkey, Controller controller)
         {
@@ -79,17 +82,65 @@ namespace NeonFtool.Classes
                 fKeyComboBox.Enabled   = false;
                 skillComboBox.Enabled  = false;
                 button.Text = "Stop";
+
+                UpdateOverlay(process.MainWindowHandle);
             }
             else
             {
-                _spamList[index].Stop();
-                _spamList.Remove(index);
+                if (_spamList.TryGetValue(index, out Spam spamToStop))
+                {
+                    spamToStop.Stop();
+                    _spamList.Remove(index);
+                }
 
                 windowComboBox.Enabled = true;
                 intervalNum.Enabled    = true;
                 fKeyComboBox.Enabled   = true;
                 skillComboBox.Enabled  = true;
                 button.Text = "Start";
+
+                Process process = _processManager.GetProcessByWindowTitle(windowComboBox.Text);
+                if (process != null) UpdateOverlay(process.MainWindowHandle);
+            }
+        }
+
+        private void UpdateOverlay(IntPtr handle)
+        {
+            // Find all active spammers for this window handle
+            var activeIndices = _spamList.Keys.Where(idx => {
+                GroupBox gb = _controller.GetAllGroupBox().FirstOrDefault(g => Controller.GetIndex(g) == idx);
+                if (gb == null) return false;
+                ComboBox winCb = (ComboBox)Controller.GetControlOnGroupBox(gb, "windowComboBox");
+                Process p = _processManager.GetProcessByWindowTitle(winCb.Text);
+                return p != null && p.MainWindowHandle == handle;
+            }).ToList();
+
+            if (activeIndices.Any())
+            {
+                string combinedNames = string.Join(", ", activeIndices.Select(idx => {
+                    GroupBox gb = _controller.GetAllGroupBox().FirstOrDefault(g => Controller.GetIndex(g) == idx);
+                    return gb?.Text ?? $"Spammer {idx}";
+                }));
+
+                if (!_overlays.ContainsKey(handle))
+                {
+                    OverlayForm overlay = new OverlayForm(handle, combinedNames);
+                    overlay.Show();
+                    _overlays[handle] = overlay;
+                }
+                else
+                {
+                    _overlays[handle].UpdateName(combinedNames);
+                }
+            }
+            else
+            {
+                if (_overlays.TryGetValue(handle, out OverlayForm overlay))
+                {
+                    overlay.Close();
+                    overlay.Dispose();
+                    _overlays.Remove(handle);
+                }
             }
         }
 
@@ -132,6 +183,19 @@ namespace NeonFtool.Classes
                 MessageBox.Show(ex.Message, Constants.MAIN_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 comboBox.SelectedIndex = 0;
             }
+        }
+
+        public void Dispose()
+        {
+            foreach (var overlay in _overlays.Values)
+            {
+                if (!overlay.IsDisposed)
+                {
+                    overlay.Close();
+                    overlay.Dispose();
+                }
+            }
+            _overlays.Clear();
         }
 
         /// <summary>

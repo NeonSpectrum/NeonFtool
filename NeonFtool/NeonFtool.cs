@@ -283,6 +283,8 @@ namespace NeonFtool
         {
             SaveSettings();
 
+            _events.Dispose();
+
             // Restore any hidden windows before exit.
             _windowManagerForm.RightProcesses.ForEach(p => ProcessManager.ShowWindow(p.MainWindowHandle));
         }
