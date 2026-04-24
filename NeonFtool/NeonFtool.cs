@@ -16,7 +16,6 @@ namespace NeonFtool
         private readonly Events _events;
         private readonly Hotkey _hotkey;
         private Settings _settings;
-        private readonly DumpCleanerForm _dumpCleanerForm;
         private readonly WindowManagerForm _windowManagerForm;
         private AboutForm _aboutForm;
 
@@ -27,7 +26,6 @@ namespace NeonFtool
             _processManager   = new ProcessManager();
             _hotkey           = new Hotkey(_processManager);
             _settings         = Settings.Get();
-            _dumpCleanerForm  = new DumpCleanerForm();
             _windowManagerForm = new WindowManagerForm();
             _aboutForm        = new AboutForm();
 
@@ -38,7 +36,6 @@ namespace NeonFtool
             _events     = new Events(_processManager, _hotkey, _controller);
 
             _windowManagerForm.WindowClosed += ReloadSettings;
-            _dumpCleanerForm.WindowClosed   += ReloadSettings;
 
             ExecuteStartup();
         }
@@ -54,7 +51,6 @@ namespace NeonFtool
             LoadComboBoxValues();
             SetEventHandlers();
             LoadSettings();
-            ExecuteDumpCleaner();
 
             _isLoaded = true;
         }
@@ -65,32 +61,7 @@ namespace NeonFtool
 
         private void RefreshWindowList()
         {
-            Process[] processes = _processManager.RefreshProcessList().GetProcessList();
-
-            foreach (ComboBox comboBox in _controller.GetAllWindowComboBox())
-            {
-                // If the spammer is running, the ComboBox is disabled.
-                // We should skip refreshing to avoid interrupting the active selection.
-                if (!comboBox.Enabled) continue;
-
-                // Remember previously selected PID so we can restore it accurately.
-                int lastPid = (int)((comboBox.SelectedItem as ComboBoxItem)?.Value ?? -1);
-
-                comboBox.Items.Clear();
-                comboBox.Items.Add(new ComboBoxItem { Text = Constants.SELECT_WINDOW, Value = -1 });
-
-                int restoreIndex = 0;
-
-                foreach (Process process in processes)
-                {
-                    comboBox.Items.Add(new ComboBoxItem { Text = process.MainWindowTitle, Value = process.Id });
-
-                    if (process.Id == lastPid)
-                        restoreIndex = comboBox.Items.Count - 1;
-                }
-
-                comboBox.SelectedIndex = restoreIndex;
-            }
+            _processManager.RefreshProcessList();
         }
 
         // ──────────────────────────────────────────────────────────
@@ -170,37 +141,20 @@ namespace NeonFtool
 
                 groupBox.Text = Settings.GetOrDefault(slot, "spammerGroupBox", groupBox.Text).ToString();
 
-                // Window ComboBox
-                ComboBox windowCb = (ComboBox)Controller.GetControlOnGroupBox(groupBox, "windowComboBox");
-                if (slot.TryGetValue("windowComboBox", out object savedWindow))
+                // Window TextBox
+                TextBox windowTb = (TextBox)Controller.GetControlOnGroupBox(groupBox, "windowTextBox");
+                if (slot.TryGetValue("windowTextBox", out object savedWindow))
                 {
-                    string savedText = savedWindow.ToString();
-                    bool found = false;
-
-                    // First pass: try exact match (handles same-session or exact title match)
-                    for (int i = 0; i < windowCb.Items.Count; i++)
+                    windowTb.Text = savedWindow.ToString();
+                }
+                else if (slot.TryGetValue("windowComboBox", out object legacyWindow))
+                {
+                    // Migration: try to use the old selection as a starting regex/title
+                    string savedText = legacyWindow.ToString();
+                    if (savedText != Constants.SELECT_WINDOW)
                     {
-                        if (((ComboBoxItem)windowCb.Items[i]).Text == savedText)
-                        {
-                            windowCb.SelectedIndex = i;
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    // Second pass: try matching base title (ignore PID tag differences)
-                    if (!found && savedText != Constants.SELECT_WINDOW && savedText != "")
-                    {
-                        string baseSaved = savedText.Split(new[] { " PID ->" }, StringSplitOptions.None)[0];
-                        for (int i = 1; i < windowCb.Items.Count; i++)
-                        {
-                            string itemText = ((ComboBoxItem)windowCb.Items[i]).Text;
-                            if (itemText.StartsWith(baseSaved))
-                            {
-                                windowCb.SelectedIndex = i;
-                                break;
-                            }
-                        }
+                        // Strip PID tag if it exists to make it a cleaner regex/match
+                        windowTb.Text = savedText.Split(new[] { " PID ->" }, StringSplitOptions.None)[0];
                     }
                 }
 
@@ -219,17 +173,20 @@ namespace NeonFtool
                 ((CheckBox)Controller.GetControlOnGroupBox(groupBox, "parallelCheckbox")).Checked
                     = (bool)Settings.GetOrDefault(slot, "parallelCheckbox", false);
             }
+
+            lockOverlayToolStripMenuItem.Checked = _settings.LockOverlay;
         }
 
         private void SaveSettings()
         {
+            ReloadSettings(); // Load latest offsets/settings from disk before saving UI changes
             foreach (GroupBox groupBox in _controller.GetAllGroupBox())
             {
                 int index = Controller.GetIndex(groupBox);
                 Dictionary<string, object> slot = new();
 
                 slot["spammerGroupBox"] = groupBox.Text;
-                slot["windowComboBox"]  = ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "windowComboBox")).SelectedItem is ComboBoxItem wi ? wi.Text : "";
+                slot["windowTextBox"]   = ((TextBox)Controller.GetControlOnGroupBox(groupBox, "windowTextBox")).Text;
                 slot["hotkeyComboBox"]  = ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "hotkeyComboBox")).SelectedIndex;
                 slot["fKeyComboBox"]    = ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "fKeyComboBox")).SelectedIndex;
                 slot["skillComboBox"]   = ((ComboBox)Controller.GetControlOnGroupBox(groupBox, "skillComboBox")).SelectedIndex;
@@ -239,35 +196,13 @@ namespace NeonFtool
                 _settings.Spammer[index] = slot;
             }
 
+            _settings.LockOverlay = lockOverlayToolStripMenuItem.Checked;
             _settings.Save();
         }
 
         private void ReloadSettings()
         {
             _settings = Settings.Get();
-        }
-
-        // ──────────────────────────────────────────────────────────
-        //  Dump cleaner
-        // ──────────────────────────────────────────────────────────
-
-        private void ExecuteDumpCleaner()
-        {
-            var dc = _settings.DumpCleaner;
-
-            if (dc.Count == 0) return;
-            if (Settings.GetOrDefault(dc, "autoCleanDumpOnStartup", false) is not true) return;
-
-            try
-            {
-                _dumpCleanerForm.CleanDumpInsanityFlyff(
-                    dc["path"].ToString(),
-                    (bool)dc["rpt"],
-                    (bool)dc["dmp"],
-                    (bool)dc["txt"]
-                );
-            }
-            catch { /* Silently ignore startup clean failures */ }
         }
 
         // ──────────────────────────────────────────────────────────
@@ -310,19 +245,21 @@ namespace NeonFtool
                 _windowManagerForm.Show();
         }
 
-        private void dumpCleanerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (_dumpCleanerForm.IsDisposed) return; // already disposed — shouldn't happen with shared instance
-
-            _dumpCleanerForm.ShowDialog();
-        }
-
         private void aboutMenuStrip_Click(object sender, EventArgs e)
         {
             if (_aboutForm.IsDisposed)
                 _aboutForm = new AboutForm();
 
             _aboutForm.ShowDialog();
+        }
+
+        private void lockOverlayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lockOverlayToolStripMenuItem.Checked = !lockOverlayToolStripMenuItem.Checked;
+            ReloadSettings();
+            _settings.LockOverlay = lockOverlayToolStripMenuItem.Checked;
+            _events.SetOverlayLock(_settings.LockOverlay);
+            _settings.Save();
         }
 
         // ──────────────────────────────────────────────────────────

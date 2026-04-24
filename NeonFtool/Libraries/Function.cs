@@ -41,5 +41,6 @@ namespace NeonFtool.Libraries
         public const int GWL_EXSTYLE = -20;
         public const int WS_EX_LAYERED = 0x80000;
         public const int WS_EX_TRANSPARENT = 0x20;
+        public const int WS_EX_NOACTIVATE = 0x08000000;
     }
 }

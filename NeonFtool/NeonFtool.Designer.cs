@@ -39,11 +39,11 @@ namespace NeonFtool
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsMenuStrip = new System.Windows.Forms.ToolStripMenuItem();
-            this.dumpCleanerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lockOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMenuStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
-            this.windowComboBox1 = new System.Windows.Forms.ComboBox();
+            this.windowTextBox1 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.fKeyComboBox1 = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -78,7 +78,7 @@ namespace NeonFtool
             this.label23 = new System.Windows.Forms.Label();
             this.fKeyComboBox5 = new System.Windows.Forms.ComboBox();
             this.label24 = new System.Windows.Forms.Label();
-            this.windowComboBox5 = new System.Windows.Forms.ComboBox();
+            this.windowTextBox5 = new System.Windows.Forms.TextBox();
             this.label25 = new System.Windows.Forms.Label();
             this.spammerGroupBox4 = new System.Windows.Forms.GroupBox();
             this.intervalNumeric4 = new System.Windows.Forms.NumericUpDown();
@@ -91,7 +91,7 @@ namespace NeonFtool
             this.label18 = new System.Windows.Forms.Label();
             this.fKeyComboBox4 = new System.Windows.Forms.ComboBox();
             this.label19 = new System.Windows.Forms.Label();
-            this.windowComboBox4 = new System.Windows.Forms.ComboBox();
+            this.windowTextBox4 = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.spammerGroupBox3 = new System.Windows.Forms.GroupBox();
             this.intervalNumeric3 = new System.Windows.Forms.NumericUpDown();
@@ -104,7 +104,7 @@ namespace NeonFtool
             this.label13 = new System.Windows.Forms.Label();
             this.fKeyComboBox3 = new System.Windows.Forms.ComboBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.windowComboBox3 = new System.Windows.Forms.ComboBox();
+            this.windowTextBox3 = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.spammerGroupBox2 = new System.Windows.Forms.GroupBox();
             this.intervalNumeric2 = new System.Windows.Forms.NumericUpDown();
@@ -117,7 +117,7 @@ namespace NeonFtool
             this.label8 = new System.Windows.Forms.Label();
             this.fKeyComboBox2 = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.windowComboBox2 = new System.Windows.Forms.ComboBox();
+            this.windowTextBox2 = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.spammerGroupBox10 = new System.Windows.Forms.GroupBox();
@@ -131,7 +131,7 @@ namespace NeonFtool
             this.label48 = new System.Windows.Forms.Label();
             this.fKeyComboBox10 = new System.Windows.Forms.ComboBox();
             this.label49 = new System.Windows.Forms.Label();
-            this.windowComboBox10 = new System.Windows.Forms.ComboBox();
+            this.windowTextBox10 = new System.Windows.Forms.TextBox();
             this.label50 = new System.Windows.Forms.Label();
             this.spammerGroupBox9 = new System.Windows.Forms.GroupBox();
             this.intervalNumeric9 = new System.Windows.Forms.NumericUpDown();
@@ -144,7 +144,7 @@ namespace NeonFtool
             this.label28 = new System.Windows.Forms.Label();
             this.fKeyComboBox9 = new System.Windows.Forms.ComboBox();
             this.label29 = new System.Windows.Forms.Label();
-            this.windowComboBox9 = new System.Windows.Forms.ComboBox();
+            this.windowTextBox9 = new System.Windows.Forms.TextBox();
             this.label30 = new System.Windows.Forms.Label();
             this.spammerGroupBox6 = new System.Windows.Forms.GroupBox();
             this.intervalNumeric6 = new System.Windows.Forms.NumericUpDown();
@@ -157,7 +157,7 @@ namespace NeonFtool
             this.label43 = new System.Windows.Forms.Label();
             this.fKeyComboBox6 = new System.Windows.Forms.ComboBox();
             this.label44 = new System.Windows.Forms.Label();
-            this.windowComboBox6 = new System.Windows.Forms.ComboBox();
+            this.windowTextBox6 = new System.Windows.Forms.TextBox();
             this.label45 = new System.Windows.Forms.Label();
             this.spammerGroupBox8 = new System.Windows.Forms.GroupBox();
             this.intervalNumeric8 = new System.Windows.Forms.NumericUpDown();
@@ -170,7 +170,7 @@ namespace NeonFtool
             this.label33 = new System.Windows.Forms.Label();
             this.fKeyComboBox8 = new System.Windows.Forms.ComboBox();
             this.label34 = new System.Windows.Forms.Label();
-            this.windowComboBox8 = new System.Windows.Forms.ComboBox();
+            this.windowTextBox8 = new System.Windows.Forms.TextBox();
             this.label35 = new System.Windows.Forms.Label();
             this.spammerGroupBox7 = new System.Windows.Forms.GroupBox();
             this.intervalNumeric7 = new System.Windows.Forms.NumericUpDown();
@@ -183,7 +183,7 @@ namespace NeonFtool
             this.label38 = new System.Windows.Forms.Label();
             this.fKeyComboBox7 = new System.Windows.Forms.ComboBox();
             this.label39 = new System.Windows.Forms.Label();
-            this.windowComboBox7 = new System.Windows.Forms.ComboBox();
+            this.windowTextBox7 = new System.Windows.Forms.TextBox();
             this.label40 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.spammerGroupBox1.SuspendLayout();
@@ -255,25 +255,24 @@ namespace NeonFtool
             // toolsMenuStrip
             // 
             this.toolsMenuStrip.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.dumpCleanerToolStripMenuItem,
-            this.windowManagerToolStripMenuItem});
+            this.windowManagerToolStripMenuItem,
+            this.lockOverlayToolStripMenuItem});
             this.toolsMenuStrip.Name = "toolsMenuStrip";
             this.toolsMenuStrip.Size = new System.Drawing.Size(47, 20);
             this.toolsMenuStrip.Text = "Tools";
-            // 
-            // dumpCleanerToolStripMenuItem
-            // 
-            this.dumpCleanerToolStripMenuItem.Name = "dumpCleanerToolStripMenuItem";
-            this.dumpCleanerToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.dumpCleanerToolStripMenuItem.Text = "Dump Cleaner";
-            this.dumpCleanerToolStripMenuItem.Click += new System.EventHandler(this.dumpCleanerToolStripMenuItem_Click);
-            // 
             // windowManagerToolStripMenuItem
             // 
             this.windowManagerToolStripMenuItem.Name = "windowManagerToolStripMenuItem";
             this.windowManagerToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.windowManagerToolStripMenuItem.Text = "Window Manager";
             this.windowManagerToolStripMenuItem.Click += new System.EventHandler(this.windowManagerToolStripMenuItem_Click);
+            // 
+            // lockOverlayToolStripMenuItem
+            // 
+            this.lockOverlayToolStripMenuItem.Name = "lockOverlayToolStripMenuItem";
+            this.lockOverlayToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.lockOverlayToolStripMenuItem.Text = "Lock Overlay";
+            this.lockOverlayToolStripMenuItem.Click += new System.EventHandler(this.lockOverlayToolStripMenuItem_Click);
             // 
             // aboutMenuStrip
             // 
@@ -291,14 +290,13 @@ namespace NeonFtool
             this.label1.TabIndex = 0;
             this.label1.Text = "Window";
             // 
-            // windowComboBox1
+            // windowTextBox1
             // 
-            this.windowComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.windowComboBox1.FormattingEnabled = true;
-            this.windowComboBox1.Location = new System.Drawing.Point(14, 36);
-            this.windowComboBox1.Name = "windowComboBox1";
-            this.windowComboBox1.Size = new System.Drawing.Size(161, 21);
-            this.windowComboBox1.TabIndex = 1;
+
+            this.windowTextBox1.Location = new System.Drawing.Point(14, 36);
+            this.windowTextBox1.Name = "windowTextBox1";
+            this.windowTextBox1.Size = new System.Drawing.Size(161, 21);
+            this.windowTextBox1.TabIndex = 1;
             // 
             // label2
             // 
@@ -405,7 +403,7 @@ namespace NeonFtool
             this.spammerGroupBox1.Controls.Add(this.label3);
             this.spammerGroupBox1.Controls.Add(this.fKeyComboBox1);
             this.spammerGroupBox1.Controls.Add(this.label2);
-            this.spammerGroupBox1.Controls.Add(this.windowComboBox1);
+            this.spammerGroupBox1.Controls.Add(this.windowTextBox1);
             this.spammerGroupBox1.Controls.Add(this.label1);
             this.spammerGroupBox1.Location = new System.Drawing.Point(7, 3);
             this.spammerGroupBox1.Name = "spammerGroupBox1";
@@ -479,7 +477,7 @@ namespace NeonFtool
             this.spammerGroupBox5.Controls.Add(this.label23);
             this.spammerGroupBox5.Controls.Add(this.fKeyComboBox5);
             this.spammerGroupBox5.Controls.Add(this.label24);
-            this.spammerGroupBox5.Controls.Add(this.windowComboBox5);
+            this.spammerGroupBox5.Controls.Add(this.windowTextBox5);
             this.spammerGroupBox5.Controls.Add(this.label25);
             this.spammerGroupBox5.Location = new System.Drawing.Point(7, 467);
             this.spammerGroupBox5.Name = "spammerGroupBox5";
@@ -587,14 +585,14 @@ namespace NeonFtool
             this.label24.TabIndex = 0;
             this.label24.Text = "F-Key";
             // 
-            // windowComboBox5
+            // windowTextBox5
             // 
-            this.windowComboBox5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.windowComboBox5.FormattingEnabled = true;
-            this.windowComboBox5.Location = new System.Drawing.Point(14, 36);
-            this.windowComboBox5.Name = "windowComboBox5";
-            this.windowComboBox5.Size = new System.Drawing.Size(161, 21);
-            this.windowComboBox5.TabIndex = 33;
+
+
+            this.windowTextBox5.Location = new System.Drawing.Point(14, 36);
+            this.windowTextBox5.Name = "windowTextBox5";
+            this.windowTextBox5.Size = new System.Drawing.Size(161, 21);
+            this.windowTextBox5.TabIndex = 33;
             // 
             // label25
             // 
@@ -628,7 +626,7 @@ namespace NeonFtool
             this.spammerGroupBox4.Controls.Add(this.label18);
             this.spammerGroupBox4.Controls.Add(this.fKeyComboBox4);
             this.spammerGroupBox4.Controls.Add(this.label19);
-            this.spammerGroupBox4.Controls.Add(this.windowComboBox4);
+            this.spammerGroupBox4.Controls.Add(this.windowTextBox4);
             this.spammerGroupBox4.Controls.Add(this.label20);
             this.spammerGroupBox4.Location = new System.Drawing.Point(7, 351);
             this.spammerGroupBox4.Name = "spammerGroupBox4";
@@ -736,14 +734,14 @@ namespace NeonFtool
             this.label19.TabIndex = 0;
             this.label19.Text = "F-Key";
             // 
-            // windowComboBox4
+            // windowTextBox4
             // 
-            this.windowComboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.windowComboBox4.FormattingEnabled = true;
-            this.windowComboBox4.Location = new System.Drawing.Point(14, 36);
-            this.windowComboBox4.Name = "windowComboBox4";
-            this.windowComboBox4.Size = new System.Drawing.Size(161, 21);
-            this.windowComboBox4.TabIndex = 25;
+
+
+            this.windowTextBox4.Location = new System.Drawing.Point(14, 36);
+            this.windowTextBox4.Name = "windowTextBox4";
+            this.windowTextBox4.Size = new System.Drawing.Size(161, 21);
+            this.windowTextBox4.TabIndex = 25;
             // 
             // label20
             // 
@@ -777,7 +775,7 @@ namespace NeonFtool
             this.spammerGroupBox3.Controls.Add(this.label13);
             this.spammerGroupBox3.Controls.Add(this.fKeyComboBox3);
             this.spammerGroupBox3.Controls.Add(this.label14);
-            this.spammerGroupBox3.Controls.Add(this.windowComboBox3);
+            this.spammerGroupBox3.Controls.Add(this.windowTextBox3);
             this.spammerGroupBox3.Controls.Add(this.label15);
             this.spammerGroupBox3.Location = new System.Drawing.Point(7, 235);
             this.spammerGroupBox3.Name = "spammerGroupBox3";
@@ -885,14 +883,14 @@ namespace NeonFtool
             this.label14.TabIndex = 0;
             this.label14.Text = "F-Key";
             // 
-            // windowComboBox3
+            // windowTextBox3
             // 
-            this.windowComboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.windowComboBox3.FormattingEnabled = true;
-            this.windowComboBox3.Location = new System.Drawing.Point(14, 36);
-            this.windowComboBox3.Name = "windowComboBox3";
-            this.windowComboBox3.Size = new System.Drawing.Size(161, 21);
-            this.windowComboBox3.TabIndex = 17;
+
+
+            this.windowTextBox3.Location = new System.Drawing.Point(14, 36);
+            this.windowTextBox3.Name = "windowTextBox3";
+            this.windowTextBox3.Size = new System.Drawing.Size(161, 21);
+            this.windowTextBox3.TabIndex = 17;
             // 
             // label15
             // 
@@ -926,7 +924,7 @@ namespace NeonFtool
             this.spammerGroupBox2.Controls.Add(this.label8);
             this.spammerGroupBox2.Controls.Add(this.fKeyComboBox2);
             this.spammerGroupBox2.Controls.Add(this.label9);
-            this.spammerGroupBox2.Controls.Add(this.windowComboBox2);
+            this.spammerGroupBox2.Controls.Add(this.windowTextBox2);
             this.spammerGroupBox2.Controls.Add(this.label10);
             this.spammerGroupBox2.Location = new System.Drawing.Point(7, 119);
             this.spammerGroupBox2.Name = "spammerGroupBox2";
@@ -1034,14 +1032,14 @@ namespace NeonFtool
             this.label9.TabIndex = 0;
             this.label9.Text = "F-Key";
             // 
-            // windowComboBox2
+            // windowTextBox2
             // 
-            this.windowComboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.windowComboBox2.FormattingEnabled = true;
-            this.windowComboBox2.Location = new System.Drawing.Point(14, 36);
-            this.windowComboBox2.Name = "windowComboBox2";
-            this.windowComboBox2.Size = new System.Drawing.Size(161, 21);
-            this.windowComboBox2.TabIndex = 9;
+
+
+            this.windowTextBox2.Location = new System.Drawing.Point(14, 36);
+            this.windowTextBox2.Name = "windowTextBox2";
+            this.windowTextBox2.Size = new System.Drawing.Size(161, 21);
+            this.windowTextBox2.TabIndex = 9;
             // 
             // label10
             // 
@@ -1089,7 +1087,7 @@ namespace NeonFtool
             this.spammerGroupBox10.Controls.Add(this.label48);
             this.spammerGroupBox10.Controls.Add(this.fKeyComboBox10);
             this.spammerGroupBox10.Controls.Add(this.label49);
-            this.spammerGroupBox10.Controls.Add(this.windowComboBox10);
+            this.spammerGroupBox10.Controls.Add(this.windowTextBox10);
             this.spammerGroupBox10.Controls.Add(this.label50);
             this.spammerGroupBox10.Location = new System.Drawing.Point(7, 467);
             this.spammerGroupBox10.Name = "spammerGroupBox10";
@@ -1196,15 +1194,10 @@ namespace NeonFtool
             this.label49.Size = new System.Drawing.Size(34, 13);
             this.label49.TabIndex = 0;
             this.label49.Text = "F-Key";
-            // 
-            // windowComboBox10
-            // 
-            this.windowComboBox10.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.windowComboBox10.FormattingEnabled = true;
-            this.windowComboBox10.Location = new System.Drawing.Point(14, 36);
-            this.windowComboBox10.Name = "windowComboBox10";
-            this.windowComboBox10.Size = new System.Drawing.Size(161, 21);
-            this.windowComboBox10.TabIndex = 1;
+            this.windowTextBox10.Location = new System.Drawing.Point(14, 36);
+            this.windowTextBox10.Name = "windowTextBox10";
+            this.windowTextBox10.Size = new System.Drawing.Size(161, 21);
+            this.windowTextBox10.TabIndex = 1;
             // 
             // label50
             // 
@@ -1238,7 +1231,7 @@ namespace NeonFtool
             this.spammerGroupBox9.Controls.Add(this.label28);
             this.spammerGroupBox9.Controls.Add(this.fKeyComboBox9);
             this.spammerGroupBox9.Controls.Add(this.label29);
-            this.spammerGroupBox9.Controls.Add(this.windowComboBox9);
+            this.spammerGroupBox9.Controls.Add(this.windowTextBox9);
             this.spammerGroupBox9.Controls.Add(this.label30);
             this.spammerGroupBox9.Location = new System.Drawing.Point(7, 351);
             this.spammerGroupBox9.Name = "spammerGroupBox9";
@@ -1345,15 +1338,10 @@ namespace NeonFtool
             this.label29.Size = new System.Drawing.Size(34, 13);
             this.label29.TabIndex = 0;
             this.label29.Text = "F-Key";
-            // 
-            // windowComboBox9
-            // 
-            this.windowComboBox9.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.windowComboBox9.FormattingEnabled = true;
-            this.windowComboBox9.Location = new System.Drawing.Point(14, 36);
-            this.windowComboBox9.Name = "windowComboBox9";
-            this.windowComboBox9.Size = new System.Drawing.Size(161, 21);
-            this.windowComboBox9.TabIndex = 1;
+            this.windowTextBox9.Location = new System.Drawing.Point(14, 36);
+            this.windowTextBox9.Name = "windowTextBox9";
+            this.windowTextBox9.Size = new System.Drawing.Size(161, 21);
+            this.windowTextBox9.TabIndex = 1;
             // 
             // label30
             // 
@@ -1387,7 +1375,7 @@ namespace NeonFtool
             this.spammerGroupBox6.Controls.Add(this.label43);
             this.spammerGroupBox6.Controls.Add(this.fKeyComboBox6);
             this.spammerGroupBox6.Controls.Add(this.label44);
-            this.spammerGroupBox6.Controls.Add(this.windowComboBox6);
+            this.spammerGroupBox6.Controls.Add(this.windowTextBox6);
             this.spammerGroupBox6.Controls.Add(this.label45);
             this.spammerGroupBox6.Location = new System.Drawing.Point(7, 3);
             this.spammerGroupBox6.Name = "spammerGroupBox6";
@@ -1495,14 +1483,13 @@ namespace NeonFtool
             this.label44.TabIndex = 0;
             this.label44.Text = "F-Key";
             // 
-            // windowComboBox6
+            // windowTextBox6
             // 
-            this.windowComboBox6.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.windowComboBox6.FormattingEnabled = true;
-            this.windowComboBox6.Location = new System.Drawing.Point(14, 36);
-            this.windowComboBox6.Name = "windowComboBox6";
-            this.windowComboBox6.Size = new System.Drawing.Size(161, 21);
-            this.windowComboBox6.TabIndex = 1;
+
+            this.windowTextBox6.Location = new System.Drawing.Point(14, 36);
+            this.windowTextBox6.Name = "windowTextBox6";
+            this.windowTextBox6.Size = new System.Drawing.Size(161, 21);
+            this.windowTextBox6.TabIndex = 1;
             // 
             // label45
             // 
@@ -1536,7 +1523,7 @@ namespace NeonFtool
             this.spammerGroupBox8.Controls.Add(this.label33);
             this.spammerGroupBox8.Controls.Add(this.fKeyComboBox8);
             this.spammerGroupBox8.Controls.Add(this.label34);
-            this.spammerGroupBox8.Controls.Add(this.windowComboBox8);
+            this.spammerGroupBox8.Controls.Add(this.windowTextBox8);
             this.spammerGroupBox8.Controls.Add(this.label35);
             this.spammerGroupBox8.Location = new System.Drawing.Point(7, 235);
             this.spammerGroupBox8.Name = "spammerGroupBox8";
@@ -1644,14 +1631,13 @@ namespace NeonFtool
             this.label34.TabIndex = 0;
             this.label34.Text = "F-Key";
             // 
-            // windowComboBox8
+            // windowTextBox8
             // 
-            this.windowComboBox8.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.windowComboBox8.FormattingEnabled = true;
-            this.windowComboBox8.Location = new System.Drawing.Point(14, 36);
-            this.windowComboBox8.Name = "windowComboBox8";
-            this.windowComboBox8.Size = new System.Drawing.Size(161, 21);
-            this.windowComboBox8.TabIndex = 1;
+
+            this.windowTextBox8.Location = new System.Drawing.Point(14, 36);
+            this.windowTextBox8.Name = "windowTextBox8";
+            this.windowTextBox8.Size = new System.Drawing.Size(161, 21);
+            this.windowTextBox8.TabIndex = 1;
             // 
             // label35
             // 
@@ -1685,7 +1671,7 @@ namespace NeonFtool
             this.spammerGroupBox7.Controls.Add(this.label38);
             this.spammerGroupBox7.Controls.Add(this.fKeyComboBox7);
             this.spammerGroupBox7.Controls.Add(this.label39);
-            this.spammerGroupBox7.Controls.Add(this.windowComboBox7);
+            this.spammerGroupBox7.Controls.Add(this.windowTextBox7);
             this.spammerGroupBox7.Controls.Add(this.label40);
             this.spammerGroupBox7.Location = new System.Drawing.Point(7, 119);
             this.spammerGroupBox7.Name = "spammerGroupBox7";
@@ -1793,14 +1779,13 @@ namespace NeonFtool
             this.label39.TabIndex = 0;
             this.label39.Text = "F-Key";
             // 
-            // windowComboBox7
+            // windowTextBox7
             // 
-            this.windowComboBox7.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.windowComboBox7.FormattingEnabled = true;
-            this.windowComboBox7.Location = new System.Drawing.Point(14, 36);
-            this.windowComboBox7.Name = "windowComboBox7";
-            this.windowComboBox7.Size = new System.Drawing.Size(161, 21);
-            this.windowComboBox7.TabIndex = 1;
+
+            this.windowTextBox7.Location = new System.Drawing.Point(14, 36);
+            this.windowTextBox7.Name = "windowTextBox7";
+            this.windowTextBox7.Size = new System.Drawing.Size(161, 21);
+            this.windowTextBox7.TabIndex = 1;
             // 
             // label40
             // 
@@ -1942,42 +1927,42 @@ namespace NeonFtool
         private System.Windows.Forms.GroupBox spammerGroupBox9;
         private System.Windows.Forms.GroupBox spammerGroupBox10;
 
-        private System.Windows.Forms.ComboBox windowComboBox1;
+        private System.Windows.Forms.TextBox windowTextBox1;
         private System.Windows.Forms.ComboBox skillComboBox1;
         private System.Windows.Forms.ComboBox hotkeyComboBox1;
         private System.Windows.Forms.ComboBox fKeyComboBox1;
         private System.Windows.Forms.LinkLabel renameLabel1;
         private System.Windows.Forms.Button startButton1;
 
-        private System.Windows.Forms.ComboBox windowComboBox2;
+        private System.Windows.Forms.TextBox windowTextBox2;
         private System.Windows.Forms.ComboBox skillComboBox2;
         private System.Windows.Forms.ComboBox hotkeyComboBox2;
         private System.Windows.Forms.ComboBox fKeyComboBox2;
         private System.Windows.Forms.LinkLabel renameLabel2;
         private System.Windows.Forms.Button startButton2;
 
-        private System.Windows.Forms.ComboBox windowComboBox3;
+        private System.Windows.Forms.TextBox windowTextBox3;
         private System.Windows.Forms.ComboBox skillComboBox3;
         private System.Windows.Forms.ComboBox hotkeyComboBox3;
         private System.Windows.Forms.ComboBox fKeyComboBox3;
         private System.Windows.Forms.LinkLabel renameLabel3;
         private System.Windows.Forms.Button startButton3;
 
-        private System.Windows.Forms.ComboBox windowComboBox4;
+        private System.Windows.Forms.TextBox windowTextBox4;
         private System.Windows.Forms.ComboBox skillComboBox4;
         private System.Windows.Forms.ComboBox hotkeyComboBox4;
         private System.Windows.Forms.ComboBox fKeyComboBox4;
         private System.Windows.Forms.LinkLabel renameLabel4;
         private System.Windows.Forms.Button startButton4;
 
-        private System.Windows.Forms.ComboBox windowComboBox5;
+        private System.Windows.Forms.TextBox windowTextBox5;
         private System.Windows.Forms.ComboBox skillComboBox5;
         private System.Windows.Forms.ComboBox hotkeyComboBox5;
         private System.Windows.Forms.ComboBox fKeyComboBox5;
         private System.Windows.Forms.LinkLabel renameLabel5;
         private System.Windows.Forms.Button startButton5;
 
-        private System.Windows.Forms.ComboBox windowComboBox6;
+        private System.Windows.Forms.TextBox windowTextBox6;
         private System.Windows.Forms.ComboBox skillComboBox6;
         private System.Windows.Forms.ComboBox hotkeyComboBox6;
         private System.Windows.Forms.ComboBox fKeyComboBox6;
@@ -1985,7 +1970,7 @@ namespace NeonFtool
         private System.Windows.Forms.LinkLabel renameLabel6;
         private System.Windows.Forms.Button startButton6;
 
-        private System.Windows.Forms.ComboBox windowComboBox7;
+        private System.Windows.Forms.TextBox windowTextBox7;
         private System.Windows.Forms.ComboBox skillComboBox7;
         private System.Windows.Forms.ComboBox hotkeyComboBox7;
         private System.Windows.Forms.ComboBox fKeyComboBox7;
@@ -1993,7 +1978,7 @@ namespace NeonFtool
         private System.Windows.Forms.LinkLabel renameLabel7;
         private System.Windows.Forms.Button startButton7;
 
-        private System.Windows.Forms.ComboBox windowComboBox8;
+        private System.Windows.Forms.TextBox windowTextBox8;
         private System.Windows.Forms.ComboBox skillComboBox8;
         private System.Windows.Forms.ComboBox hotkeyComboBox8;
         private System.Windows.Forms.ComboBox fKeyComboBox8;
@@ -2001,7 +1986,7 @@ namespace NeonFtool
         private System.Windows.Forms.LinkLabel renameLabel8;
         private System.Windows.Forms.Button startButton8;
 
-        private System.Windows.Forms.ComboBox windowComboBox9;
+        private System.Windows.Forms.TextBox windowTextBox9;
         private System.Windows.Forms.ComboBox skillComboBox9;
         private System.Windows.Forms.ComboBox hotkeyComboBox9;
         private System.Windows.Forms.ComboBox fKeyComboBox9;
@@ -2009,7 +1994,7 @@ namespace NeonFtool
         private System.Windows.Forms.LinkLabel renameLabel9;
         private System.Windows.Forms.Button startButton9;
 
-        private System.Windows.Forms.ComboBox windowComboBox10;
+        private System.Windows.Forms.TextBox windowTextBox10;
         private System.Windows.Forms.ComboBox skillComboBox10;
         private System.Windows.Forms.ComboBox hotkeyComboBox10;
         private System.Windows.Forms.ComboBox fKeyComboBox10;
@@ -2029,12 +2014,12 @@ namespace NeonFtool
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem dumpCleanerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem windowManagerToolStripMenuItem;
         private System.Windows.Forms.NumericUpDown intervalNumeric1;
         private System.Windows.Forms.NumericUpDown intervalNumeric5;
         private System.Windows.Forms.NumericUpDown intervalNumeric4;
         private System.Windows.Forms.NumericUpDown intervalNumeric3;
+        private System.Windows.Forms.ToolStripMenuItem lockOverlayToolStripMenuItem;
         private System.Windows.Forms.NumericUpDown intervalNumeric2;
     }
 }

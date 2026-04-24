@@ -11,9 +11,10 @@ namespace NeonFtool.Classes
 
         public Dictionary<int, Dictionary<string, object>> Spammer { get; set; } = new();
 
-        public Dictionary<string, object> DumpCleaner { get; set; } = new();
-
         public Dictionary<string, object> WindowManager { get; set; } = new();
+        public bool LockOverlay { get; set; } = true;
+        public int OverlayOffsetX { get; set; } = -1; // -1 means use default
+        public int OverlayOffsetY { get; set; } = -1;
 
         public static Settings Get()
         {

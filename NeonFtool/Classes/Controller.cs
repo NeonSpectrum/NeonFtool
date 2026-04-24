@@ -45,14 +45,14 @@ namespace NeonFtool.Classes
         }
 
         /// <summary>
-        /// Returns all ComboBoxes named "windowComboBox..." inside every GroupBox.
+        /// Returns all TextBoxes named "windowTextBox..." inside every GroupBox.
         /// </summary>
-        public ComboBox[] GetAllWindowComboBox()
+        public TextBox[] GetAllWindowTextBox()
         {
             return GetAllGroupBox()
                 .SelectMany(gb => gb.Controls
-                    .OfType<ComboBox>()
-                    .Where(cb => cb.Name.StartsWith("windowComboBox")))
+                    .OfType<TextBox>()
+                    .Where(tb => tb.Name.StartsWith("windowTextBox")))
                 .ToArray();
         }
 
@@ -68,16 +68,14 @@ namespace NeonFtool.Classes
         }
 
         /// <summary>
-        /// Returns the process currently selected in the window ComboBox of a GroupBox.
+        /// Returns the process matching the regex in the window TextBox of a GroupBox.
         /// </summary>
         public static Process GetProcessByGroupBox(ProcessManager processManager, GroupBox groupBox)
         {
-            ComboBoxItem item = (GetControlOnGroupBox(groupBox, "windowComboBox") as ComboBox)
-                ?.SelectedItem as ComboBoxItem;
+            TextBox tb = GetControlOnGroupBox(groupBox, "windowTextBox") as TextBox;
+            if (string.IsNullOrEmpty(tb?.Text)) return null;
 
-            return item != null
-                ? processManager.GetProcessByPID((int)item.Value)
-                : null;
+            return processManager.GetProcessByRegex(tb.Text);
         }
     }
 }

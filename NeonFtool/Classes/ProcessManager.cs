@@ -48,6 +48,24 @@ namespace NeonFtool.Classes
             return _processes.FirstOrDefault(p => p.MainWindowTitle == name);
         }
 
+        public Process GetProcessByRegex(string pattern)
+        {
+            if (string.IsNullOrEmpty(pattern)) return null;
+
+            try
+            {
+                // Escape common special characters if they are not part of a valid regex? 
+                // No, let's assume the user knows it's regex.
+                var regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                return _processes.FirstOrDefault(p => regex.IsMatch(p.MainWindowTitle));
+            }
+            catch
+            {
+                // Fallback to exact match if regex is invalid
+                return GetProcessByWindowTitle(pattern);
+            }
+        }
+
         public Process GetProcessByPID(int pid)
         {
             return _processes.FirstOrDefault(p => p.Id == pid);

@@ -1,4 +1,5 @@
 using NeonFtool.Libraries;
+using NeonFtool.Classes;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -7,18 +8,25 @@ namespace NeonFtool.Forms
 {
     public partial class OverlayForm : Form
     {
+        private static int _globalOffsetX = -2; // -2 means not initialized
+        private static int _globalOffsetY = -2;
+
         private readonly IntPtr _targetHandle;
         private readonly Timer _updateTimer;
         private string _spammerName;
+        private bool _isLocked;
+        private bool _dragging;
+        private Point _dragStart;
 
         public OverlayForm(IntPtr targetHandle, string spammerName)
         {
             _targetHandle = targetHandle;
             _spammerName  = spammerName;
+            _isLocked     = Settings.Get().LockOverlay;
 
             InitializeComponent();
 
-            // Form setup for transparency and click-through
+            // Form setup for transparency
             this.FormBorderStyle = FormBorderStyle.None;
             this.TopMost         = true;
             this.ShowInTaskbar   = false;
@@ -27,13 +35,105 @@ namespace NeonFtool.Forms
             this.StartPosition   = FormStartPosition.Manual;
             this.Opacity         = 0.5;
 
-            // Make click-through
-            int initialStyle = Function.GetWindowLong(this.Handle, Function.GWL_EXSTYLE);
-            Function.SetWindowLong(this.Handle, Function.GWL_EXSTYLE, initialStyle | Function.WS_EX_LAYERED | Function.WS_EX_TRANSPARENT);
+            // Initial offsets
+            if (_globalOffsetX == -2)
+            {
+                Settings settings = Settings.Get();
+                if (settings.OverlayOffsetX != -1)
+                {
+                    _globalOffsetX = settings.OverlayOffsetX;
+                    _globalOffsetY = settings.OverlayOffsetY;
+                }
+            }
+
+            if (_globalOffsetX == -2 && Function.GetWindowRect(_targetHandle, out Function.RECT rect))
+            {
+                int windowWidth = rect.Right - rect.Left;
+                _globalOffsetX = (windowWidth / 2) - (this.Width / 2) + 50;
+                _globalOffsetY = (rect.Bottom - rect.Top) - this.Height - 65;
+            }
+
+            // Set initial position before showing
+            if (Function.GetWindowRect(_targetHandle, out Function.RECT currentRect))
+            {
+                this.Left = currentRect.Left + _globalOffsetX;
+                this.Top  = currentRect.Top  + _globalOffsetY;
+            }
+
+            UpdateLockState();
 
             _updateTimer = new Timer { Interval = 50 };
             _updateTimer.Tick += UpdatePosition;
             _updateTimer.Start();
+
+            // Setup dragging events
+            this.statusLabel.MouseDown += OnMouseDown;
+            this.statusLabel.MouseMove += OnMouseMove;
+            this.statusLabel.MouseUp   += OnMouseUp;
+        }
+
+        public void SetLock(bool locked)
+        {
+            _isLocked = locked;
+            UpdateLockState();
+        }
+
+        private void UpdateLockState()
+        {
+            int initialStyle = Function.GetWindowLong(this.Handle, Function.GWL_EXSTYLE);
+            // Always keep WS_EX_LAYERED and WS_EX_NOACTIVATE
+            int targetStyle = initialStyle | Function.WS_EX_LAYERED | Function.WS_EX_NOACTIVATE;
+
+            if (_isLocked)
+            {
+                Function.SetWindowLong(this.Handle, Function.GWL_EXSTYLE, targetStyle | Function.WS_EX_TRANSPARENT);
+                this.Cursor = Cursors.Default;
+            }
+            else
+            {
+                Function.SetWindowLong(this.Handle, Function.GWL_EXSTYLE, targetStyle & ~Function.WS_EX_TRANSPARENT);
+                this.Cursor = Cursors.SizeAll;
+            }
+        }
+
+        private void OnMouseDown(object sender, MouseEventArgs e)
+        {
+            if (_isLocked) return;
+            if (e.Button == MouseButtons.Left)
+            {
+                _dragging = true;
+                _dragStart = e.Location;
+            }
+        }
+
+        private void OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (_dragging)
+            {
+                this.Left += e.X - _dragStart.X;
+                this.Top  += e.Y - _dragStart.Y;
+
+                // Update offsets relative to target window
+                if (Function.GetWindowRect(_targetHandle, out Function.RECT rect))
+                {
+                    _globalOffsetX = this.Left - rect.Left;
+                    _globalOffsetY = this.Top - rect.Top;
+                }
+            }
+        }
+
+        private void OnMouseUp(object sender, MouseEventArgs e)
+        {
+            if (_dragging)
+            {
+                _dragging = false;
+                
+                // Save to settings
+                Settings settings = Settings.Get();
+                settings.OverlayOffsetX = _globalOffsetX;
+                settings.OverlayOffsetY = _globalOffsetY;
+                settings.Save();
+            }
         }
 
         public void UpdateName(string name)
@@ -44,8 +144,14 @@ namespace NeonFtool.Forms
 
         private void UpdatePosition(object sender, EventArgs e)
         {
-            // Hide overlay if the target window is not the foreground window
-            if (Function.GetForegroundWindow() != _targetHandle)
+            if (_dragging) return;
+
+            // Check foreground window
+            IntPtr fg = Function.GetForegroundWindow();
+            
+            // Hide overlay if the target window is not the foreground window 
+            // AND the overlay itself is not the foreground window
+            if (fg != _targetHandle && fg != this.Handle)
             {
                 this.Hide();
                 return;
@@ -66,11 +172,9 @@ namespace NeonFtool.Forms
 
             if (!this.Visible) this.Show();
 
-            int windowWidth = rect.Right - rect.Left;
-
-            // Center horizontally, and place at the bottom with a 20px margin
-            this.Left = rect.Left + (windowWidth / 2) - (this.Width / 2) + 50;
-            this.Top  = rect.Bottom - this.Height - 65;
+            // Update position based on offsets
+            this.Left = rect.Left + _globalOffsetX;
+            this.Top  = rect.Top  + _globalOffsetY;
         }
 
         /// <summary>

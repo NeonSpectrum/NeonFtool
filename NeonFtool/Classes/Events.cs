@@ -28,7 +28,7 @@ namespace NeonFtool.Classes
         {
             Button button = (Button)sender;
             GroupBox groupBox = (GroupBox)button.Parent;
-            ComboBox windowComboBox   = (ComboBox)Controller.GetControlOnGroupBox(groupBox, "windowComboBox");
+            TextBox windowTextBox     = (TextBox)Controller.GetControlOnGroupBox(groupBox, "windowTextBox");
             ComboBox fKeyComboBox     = (ComboBox)Controller.GetControlOnGroupBox(groupBox, "fKeyComboBox");
             ComboBox skillComboBox    = (ComboBox)Controller.GetControlOnGroupBox(groupBox, "skillComboBox");
             NumericUpDown intervalNum = (NumericUpDown)Controller.GetControlOnGroupBox(groupBox, "intervalNumeric");
@@ -56,9 +56,9 @@ namespace NeonFtool.Classes
                     }
                 }
 
-                if (windowComboBox.Text == Constants.SELECT_WINDOW)
+                if (string.IsNullOrEmpty(windowTextBox.Text))
                 {
-                    MessageBox.Show("Please select a window.", Constants.MAIN_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Please input a window title or regex.", Constants.MAIN_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -68,7 +68,12 @@ namespace NeonFtool.Classes
                     return;
                 }
 
-                Process process = _processManager.GetProcessByWindowTitle(windowComboBox.Text);
+                Process process = _processManager.GetProcessByRegex(windowTextBox.Text);
+                if (process == null)
+                {
+                    MessageBox.Show("No window found matching: " + windowTextBox.Text, Constants.MAIN_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 int interval    = (int)intervalNum.Value;
                 int fKey        = fKeyComboBox.Text  != "" ? (int)(fKeyComboBox.SelectedItem  as ComboBoxItem).Value : -1;
                 int skillKey    = skillComboBox.Text != "" ? (int)(skillComboBox.SelectedItem as ComboBoxItem).Value : -1;
@@ -77,7 +82,7 @@ namespace NeonFtool.Classes
                 spam.Start(button);
                 _spamList[index] = spam;
 
-                windowComboBox.Enabled = false;
+                windowTextBox.Enabled  = false;
                 intervalNum.Enabled    = false;
                 fKeyComboBox.Enabled   = false;
                 skillComboBox.Enabled  = false;
@@ -93,13 +98,13 @@ namespace NeonFtool.Classes
                     _spamList.Remove(index);
                 }
 
-                windowComboBox.Enabled = true;
+                windowTextBox.Enabled  = true;
                 intervalNum.Enabled    = true;
                 fKeyComboBox.Enabled   = true;
                 skillComboBox.Enabled  = true;
                 button.Text = "Start";
 
-                Process process = _processManager.GetProcessByWindowTitle(windowComboBox.Text);
+                Process process = _processManager.GetProcessByRegex(windowTextBox.Text);
                 if (process != null) UpdateOverlay(process.MainWindowHandle);
             }
         }
@@ -110,8 +115,8 @@ namespace NeonFtool.Classes
             var activeIndices = _spamList.Keys.Where(idx => {
                 GroupBox gb = _controller.GetAllGroupBox().FirstOrDefault(g => Controller.GetIndex(g) == idx);
                 if (gb == null) return false;
-                ComboBox winCb = (ComboBox)Controller.GetControlOnGroupBox(gb, "windowComboBox");
-                Process p = _processManager.GetProcessByWindowTitle(winCb.Text);
+                TextBox winTb = (TextBox)Controller.GetControlOnGroupBox(gb, "windowTextBox");
+                Process p = _processManager.GetProcessByRegex(winTb.Text);
                 return p != null && p.MainWindowHandle == handle;
             }).ToList();
 
@@ -141,6 +146,14 @@ namespace NeonFtool.Classes
                     overlay.Dispose();
                     _overlays.Remove(handle);
                 }
+            }
+        }
+
+        public void SetOverlayLock(bool locked)
+        {
+            foreach (var overlay in _overlays.Values)
+            {
+                overlay.SetLock(locked);
             }
         }
 
