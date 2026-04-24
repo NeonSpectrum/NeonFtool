@@ -40,6 +40,7 @@ namespace NeonFtool.Libraries
         private readonly Dictionary<int, (ModifierKeys Modifier, Keys Key)> _monitoredKeys = new();
 
         public event EventHandler<KeyPressedEventArgs> KeyPressed;
+        public event EventHandler<KeyPressedEventArgs> AnyKeyDown;
 
         public KeyboardHook()
         {
@@ -75,6 +76,8 @@ namespace NeonFtool.Libraries
                 int vkCode = Marshal.ReadInt32(lParam);
                 Keys key = (Keys)vkCode;
                 ModifierKeys modifier = GetCurrentModifierKeys();
+
+                AnyKeyDown?.Invoke(this, new KeyPressedEventArgs(modifier, key));
 
                 foreach (var kvp in _monitoredKeys)
                 {

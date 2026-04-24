@@ -84,5 +84,11 @@ namespace NeonFtool.Classes
                 ("ALT",  Keys.F9,        "ALT + F9"),
                 ("ALT",  Keys.F10,       "ALT + F10"),
             };
+        // Keys that trigger stopping all spammers when the feature is enabled
+        public static readonly HashSet<Keys> StopAllKeys = new HashSet<Keys>
+        {
+            Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, Keys.D0,
+            Keys.F1, Keys.F2, Keys.F3, Keys.F4, Keys.F5, Keys.F6, Keys.F7, Keys.F8, Keys.F9, Keys.F10, Keys.F11, Keys.F12
+        };
     }
 }

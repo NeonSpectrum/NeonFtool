@@ -20,7 +20,11 @@ namespace NeonFtool.Classes
             _processManager = processManager;
             _hook = new KeyboardHook();
             _hook.KeyPressed += OnHotkeyPressed;
+            _hook.AnyKeyDown += OnAnyKeyDown;
         }
+
+        public bool StopOnKeyPress { get; set; }
+        public event Action StopAllRequested;
 
         /// <summary>
         /// Registers (or replaces) the hotkey for the given spammer index.
@@ -99,6 +103,17 @@ namespace NeonFtool.Classes
                     }
                     break;
                 }
+            }
+        }
+
+        private void OnAnyKeyDown(object sender, KeyPressedEventArgs e)
+        {
+            if (!StopOnKeyPress) return;
+            if (e.Modifier != ModifierKeys.None) return; // Only stop if no modifiers are pressed (1, 2, 3... not CTRL+1)
+
+            if (Constants.StopAllKeys.Contains(e.Key))
+            {
+                StopAllRequested?.Invoke();
             }
         }
 

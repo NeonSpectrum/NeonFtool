@@ -13,6 +13,7 @@ namespace NeonFtool.Classes
 
         public Dictionary<string, object> WindowManager { get; set; } = new();
         public bool LockOverlay { get; set; } = true;
+        public bool StopOnKeyPress { get; set; } = false;
         public int OverlayOffsetX { get; set; } = -1; // -1 means use default
         public int OverlayOffsetY { get; set; } = -1;
 

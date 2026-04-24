@@ -36,6 +36,7 @@ namespace NeonFtool
             _events     = new Events(_processManager, _hotkey, _controller);
 
             _windowManagerForm.WindowClosed += ReloadSettings;
+            _hotkey.StopAllRequested += _events.StopAllSpammers;
 
             ExecuteStartup();
         }
@@ -175,6 +176,10 @@ namespace NeonFtool
             }
 
             lockOverlayToolStripMenuItem.Checked = _settings.LockOverlay;
+            _events.SetOverlayLock(_settings.LockOverlay);
+
+            stopSpamOnKeyPressToolStripMenuItem.Checked = _settings.StopOnKeyPress;
+            _hotkey.StopOnKeyPress = _settings.StopOnKeyPress;
         }
 
         private void SaveSettings()
@@ -197,6 +202,7 @@ namespace NeonFtool
             }
 
             _settings.LockOverlay = lockOverlayToolStripMenuItem.Checked;
+            _settings.StopOnKeyPress = stopSpamOnKeyPressToolStripMenuItem.Checked;
             _settings.Save();
         }
 
@@ -259,6 +265,15 @@ namespace NeonFtool
             ReloadSettings();
             _settings.LockOverlay = lockOverlayToolStripMenuItem.Checked;
             _events.SetOverlayLock(_settings.LockOverlay);
+            _settings.Save();
+        }
+
+        private void stopSpamOnKeyPressToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            stopSpamOnKeyPressToolStripMenuItem.Checked = !stopSpamOnKeyPressToolStripMenuItem.Checked;
+            ReloadSettings();
+            _settings.StopOnKeyPress = stopSpamOnKeyPressToolStripMenuItem.Checked;
+            _hotkey.StopOnKeyPress = _settings.StopOnKeyPress;
             _settings.Save();
         }
 

@@ -109,6 +109,25 @@ namespace NeonFtool.Classes
             }
         }
 
+        public void StopAllSpammers()
+        {
+            foreach (var index in _spamList.Keys.ToList())
+            {
+                GroupBox groupBox = _controller.GetAllGroupBox().FirstOrDefault(g => Controller.GetIndex(g) == index);
+                if (groupBox != null)
+                {
+                    Button startButton = (Button)Controller.GetControlOnGroupBox(groupBox, "startButton");
+                    if (startButton != null && startButton.Text == "Stop")
+                    {
+                        if (startButton.InvokeRequired)
+                            startButton.Invoke((MethodInvoker)(() => OnStartStopClick(startButton, EventArgs.Empty)));
+                        else
+                            OnStartStopClick(startButton, EventArgs.Empty);
+                    }
+                }
+            }
+        }
+
         private void UpdateOverlay(IntPtr handle)
         {
             // Find all active spammers for this window handle

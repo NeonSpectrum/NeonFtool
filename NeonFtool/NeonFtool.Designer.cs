@@ -41,6 +41,7 @@ namespace NeonFtool
             this.toolsMenuStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.windowManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lockOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopSpamOnKeyPressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMenuStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.windowTextBox1 = new System.Windows.Forms.TextBox();
@@ -256,7 +257,8 @@ namespace NeonFtool
             // 
             this.toolsMenuStrip.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.windowManagerToolStripMenuItem,
-            this.lockOverlayToolStripMenuItem});
+            this.lockOverlayToolStripMenuItem,
+            this.stopSpamOnKeyPressToolStripMenuItem});
             this.toolsMenuStrip.Name = "toolsMenuStrip";
             this.toolsMenuStrip.Size = new System.Drawing.Size(47, 20);
             this.toolsMenuStrip.Text = "Tools";
@@ -269,10 +271,15 @@ namespace NeonFtool
             // 
             // lockOverlayToolStripMenuItem
             // 
-            this.lockOverlayToolStripMenuItem.Name = "lockOverlayToolStripMenuItem";
-            this.lockOverlayToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.lockOverlayToolStripMenuItem.Text = "Lock Overlay";
             this.lockOverlayToolStripMenuItem.Click += new System.EventHandler(this.lockOverlayToolStripMenuItem_Click);
+            // 
+            // stopSpamOnKeyPressToolStripMenuItem
+            // 
+            this.stopSpamOnKeyPressToolStripMenuItem.Name = "stopSpamOnKeyPressToolStripMenuItem";
+            this.stopSpamOnKeyPressToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.stopSpamOnKeyPressToolStripMenuItem.Text = "Stop on Key Press";
+            this.stopSpamOnKeyPressToolStripMenuItem.Click += new System.EventHandler(this.stopSpamOnKeyPressToolStripMenuItem_Click);
             // 
             // aboutMenuStrip
             // 
@@ -2020,6 +2027,7 @@ namespace NeonFtool
         private System.Windows.Forms.NumericUpDown intervalNumeric4;
         private System.Windows.Forms.NumericUpDown intervalNumeric3;
         private System.Windows.Forms.ToolStripMenuItem lockOverlayToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stopSpamOnKeyPressToolStripMenuItem;
         private System.Windows.Forms.NumericUpDown intervalNumeric2;
     }
 }
