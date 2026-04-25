@@ -1,3 +1,4 @@
+using NeonFtool.Libraries;
 using System;
 using System.Threading;
 using System.Windows.Forms;
@@ -18,7 +19,17 @@ namespace NeonFtool
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new NeonFtool());
+                
+                NeonFtool mainForm = new NeonFtool();
+                mainForm.Show();
+                mainForm.Activate();
+
+                // Force the icon at the Win32 level as soon as the form is shown
+                IntPtr hIcon = mainForm.Icon.Handle;
+                Function.SendMessage(mainForm.Handle, Function.WM_SETICON, (IntPtr)Function.ICON_SMALL, hIcon);
+                Function.SendMessage(mainForm.Handle, Function.WM_SETICON, (IntPtr)Function.ICON_BIG, hIcon);
+
+                Application.Run(mainForm);
                 mutex.ReleaseMutex();
             }
             else

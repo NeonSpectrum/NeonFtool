@@ -37,8 +37,6 @@ namespace NeonFtool
 
             _windowManagerForm.WindowClosed += ReloadSettings;
             _hotkey.StopAllRequested += _events.StopAllSpammers;
-
-            ExecuteStartup();
         }
 
         private void Ftool_Load(object sender, EventArgs e)
@@ -46,9 +44,35 @@ namespace NeonFtool
             Text = Constants.MAIN_TITLE;
         }
 
+        protected override async void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+
+            // Small delay to allow the Shell to catch up after the initial window creation.
+            await System.Threading.Tasks.Task.Delay(100);
+
+            // Re-apply the icon and refresh the taskbar entry.
+            // This ensures the icon appears even if the window was started without focus.
+            try
+            {
+                IntPtr hIcon = this.Icon.Handle;
+                Function.SendMessage(this.Handle, Function.WM_SETICON, (IntPtr)Function.ICON_SMALL, hIcon);
+                Function.SendMessage(this.Handle, Function.WM_SETICON, (IntPtr)Function.ICON_BIG, hIcon);
+
+                var taskbar = (Function.ITaskbarList)new Function.TaskbarList();
+                taskbar.HrInit();
+                taskbar.DeleteTab(this.Handle);
+                taskbar.AddTab(this.Handle);
+            }
+            catch { /* Shell API not available */ }
+
+            ExecuteStartup();
+        }
+
         private void ExecuteStartup()
         {
             RefreshWindowList();
+            
             LoadComboBoxValues();
             SetEventHandlers();
             LoadSettings();
@@ -286,7 +310,7 @@ namespace NeonFtool
             get
             {
                 CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
+                cp.ExStyle |= 0x00040000; // WS_EX_APPWINDOW
                 return cp;
             }
         }
