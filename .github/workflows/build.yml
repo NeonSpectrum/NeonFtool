@@ -14,6 +14,15 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - self_contained: false
+            suffix: ""
+            name: "Framework-Dependent"
+          - self_contained: true
+            suffix: "_SelfContained"
+            name: "Self-Contained"
 
     steps:
       - name: Checkout repository
@@ -26,24 +35,23 @@ jobs:
           cache: true
           cache-dependency-path: "**/packages.lock.json"
 
-      - name: Build and Publish (Framework-Dependent)
-        run: dotnet publish "NeonFtool/NeonFtool.csproj" -c Release -r win-x86 --no-self-contained -o "artifacts/dependent"
+      - name: Build and Publish (${{ matrix.name }})
+        run: dotnet publish "NeonFtool/NeonFtool.csproj" -c Release -r win-x86 --self-contained ${{ matrix.self_contained }} -o "dist"
 
-      - name: Build and Publish (Self-Contained)
-        run: dotnet publish "NeonFtool/NeonFtool.csproj" -c Release -r win-x86 --self-contained true -o "artifacts/self-contained"
-
-      - name: Prepare Artifacts
+      - name: Rename Output
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path "dist"
-          Copy-Item "artifacts/dependent/NeonFtool.exe" -Destination "dist/NeonFtool.exe"
-          Copy-Item "artifacts/self-contained/NeonFtool.exe" -Destination "dist/NeonFtool_SelfContained.exe"
+          if ("${{ matrix.suffix }}" -ne "") {
+            Rename-Item "dist/NeonFtool.exe" "NeonFtool${{ matrix.suffix }}.exe"
+          } else {
+            Move-Item "dist/NeonFtool.exe" "NeonFtool.exe"
+          }
 
       - name: Upload executable artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NeonFtool-Builds
-          path: dist/*.exe
+          name: NeonFtool${{ matrix.suffix }}
+          path: NeonFtool${{ matrix.suffix }}.exe
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
@@ -53,18 +61,24 @@ jobs:
       contents: write
 
     steps:
-      - name: Download executable artifact
+      - name: Download Framework-Dependent artifact
         uses: actions/download-artifact@v4
         with:
-          name: NeonFtool-Builds
-          path: dist
+          name: NeonFtool
+          path: artifacts
+
+      - name: Download Self-Contained artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: NeonFtool_SelfContained
+          path: artifacts
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/NeonFtool.exe
-            dist/NeonFtool_SelfContained.exe
+            artifacts/NeonFtool.exe
+            artifacts/NeonFtool_SelfContained.exe
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
