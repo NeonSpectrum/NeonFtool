@@ -49,15 +49,16 @@ namespace NeonFtool.Forms
             if (_globalOffsetX == -2 && Function.GetWindowRect(_targetHandle, out Function.RECT rect))
             {
                 int windowWidth = rect.Right - rect.Left;
-                _globalOffsetX = (windowWidth / 2) - (this.Width / 2) + 50;
-                _globalOffsetY = (rect.Bottom - rect.Top) - this.Height - 65;
+                // Default to center of window
+                _globalOffsetX = (windowWidth / 2);
+                _globalOffsetY = (rect.Bottom - rect.Top) - 100;
             }
 
             // Set initial position before showing
             if (Function.GetWindowRect(_targetHandle, out Function.RECT currentRect))
             {
-                this.Left = currentRect.Left + _globalOffsetX;
-                this.Top  = currentRect.Top  + _globalOffsetY;
+                this.Left = currentRect.Left + _globalOffsetX - (this.Width / 2);
+                this.Top  = currentRect.Top  + _globalOffsetY - (this.Height / 2);
             }
 
             UpdateLockState();
@@ -113,11 +114,11 @@ namespace NeonFtool.Forms
                 this.Left += e.X - _dragStart.X;
                 this.Top  += e.Y - _dragStart.Y;
 
-                // Update offsets relative to target window
+                // Update offsets relative to target window (use center of form)
                 if (Function.GetWindowRect(_targetHandle, out Function.RECT rect))
                 {
-                    _globalOffsetX = this.Left - rect.Left;
-                    _globalOffsetY = this.Top - rect.Top;
+                    _globalOffsetX = (this.Left + this.Width / 2) - rect.Left;
+                    _globalOffsetY = (this.Top + this.Height / 2) - rect.Top;
                 }
             }
         }
@@ -140,6 +141,10 @@ namespace NeonFtool.Forms
         {
             _spammerName = name;
             statusLabel.Text = $"[ ACTIVE ] {_spammerName}";
+            
+            // Force layout and reposition immediately
+            this.PerformLayout();
+            UpdatePosition(null, null);
         }
 
         private void UpdatePosition(object sender, EventArgs e)
@@ -172,9 +177,9 @@ namespace NeonFtool.Forms
 
             if (!this.Visible) this.Show();
 
-            // Update position based on offsets
-            this.Left = rect.Left + _globalOffsetX;
-            this.Top  = rect.Top  + _globalOffsetY;
+            // Update position based on offsets (centered)
+            this.Left = rect.Left + _globalOffsetX - (this.Width / 2);
+            this.Top  = rect.Top  + _globalOffsetY - (this.Height / 2);
         }
 
         /// <summary>
@@ -205,7 +210,9 @@ namespace NeonFtool.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(300, 40);
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(1, 1);
             this.Controls.Add(this.statusLabel);
             this.Name = "OverlayForm";
             this.Text = "OverlayForm";
