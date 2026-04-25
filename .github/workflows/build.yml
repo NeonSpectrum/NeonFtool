@@ -14,15 +14,6 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        include:
-          - self_contained: false
-            suffix: ""
-            name: "Framework-Dependent"
-          - self_contained: true
-            suffix: "_SelfContained"
-            name: "Self-Contained"
 
     steps:
       - name: Checkout repository
@@ -35,19 +26,19 @@ jobs:
           cache: true
           cache-dependency-path: "**/packages.lock.json"
 
-      - name: Build and Publish (${{ matrix.name }})
-        run: dotnet publish "NeonFtool/NeonFtool.csproj" -c Release -r win-x64 --self-contained ${{ matrix.self_contained }} -o "dist"
+      - name: Build and Publish
+        run: dotnet publish "NeonFtool/NeonFtool.csproj" -c Release -r win-x64 -p:SelfContained=false -o "dist"
 
-      - name: Rename Output
+      - name: Prepare Artifact
         shell: pwsh
         run: |
-          Move-Item "dist/NeonFtool.exe" "NeonFtool${{ matrix.suffix }}.exe"
+          Move-Item "dist/NeonFtool.exe" "NeonFtool.exe"
 
       - name: Upload executable artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NeonFtool${{ matrix.suffix }}
-          path: NeonFtool${{ matrix.suffix }}.exe
+          name: NeonFtool
+          path: NeonFtool.exe
           if-no-files-found: error
 
   release:
@@ -58,16 +49,10 @@ jobs:
       contents: write
 
     steps:
-      - name: Download Framework-Dependent artifact
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: NeonFtool
-          path: artifacts
-
-      - name: Download Self-Contained artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: NeonFtool_SelfContained
           path: artifacts
 
       - name: Create GitHub Release
@@ -80,7 +65,6 @@ jobs:
             ${{ !startsWith(github.ref, 'refs/tags/v') && 'This release is updated on every push to the master branch.' || '' }}
           files: |
             artifacts/NeonFtool.exe
-            artifacts/NeonFtool_SelfContained.exe
           prerelease: ${{ !startsWith(github.ref, 'refs/tags/v') }}
           generate_release_notes: true
           make_latest: ${{ startsWith(github.ref, 'refs/tags/v') }}
